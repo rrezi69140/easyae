@@ -10,11 +10,14 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class ClientFixtures extends Fixture
 {
+    public const PREFIX = "client#";
+    public const POOL_MIN = 0;
+    public const POOL_MAX = 10;
+
     private Generator $faker;
 
     public function __construct()
     {
-        // Initialisation de Faker en français
         $this->faker = Factory::create('fr_FR');
     }
 
@@ -22,25 +25,26 @@ class ClientFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeBetween('-1 year', 'now');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
 
             $client = new Client();
             $client
-                ->setType($this->faker->randomElement(['Business', 'Individual'])) // Type aléatoire
-                ->setQuantityType($this->faker->randomElement(['kg', 'liters', 'pieces'])) // Unité de quantité
-                ->setQuantity((string) $this->faker->numberBetween(1, 1000)) // Quantité aléatoire
+                ->setType($this->faker->randomElement(['Business', 'Individual']))
+                ->setQuantityType($this->faker->randomElement(['kg', 'liters', 'pieces']))
+                ->setQuantity((string) $this->faker->numberBetween(1, 1000))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
-                ->setStatus($this->faker->randomElement(['active', 'inactive'])) // Statut aléatoire
-                ->setPrice((string) $this->faker->randomFloat(2, 10, 1000)) // Prix aléatoire
-                ->setPriceUnit($this->faker->randomElement(['EUR', 'USD', 'GBP'])); // Unité de prix
+                ->setStatus($this->faker->randomElement(['active', 'inactive']))
+                ->setPrice((string) $this->faker->randomFloat(2, 10, 1000))
+                ->setPriceUnit($this->faker->randomElement(['EUR', 'USD', 'GBP']));
 
             $manager->persist($client);
+
+            $this->addReference(self::PREFIX . $i, $client);
         }
 
         $manager->flush();
     }
 }
-

@@ -40,7 +40,4 @@ class AccountFixtures extends Fixture
 
         $manager->flush();
     }
-
-
-
 }
