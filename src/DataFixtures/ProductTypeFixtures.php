@@ -4,16 +4,15 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use Faker\Generator;
-use App\Entity\Account;
+use App\Entity\ProductType;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
-class AccountFixtures extends Fixture
+class ProductTypeFixtures extends Fixture
 {
-    public const PREFIX = "account#";
+    public const PREFIX = "productType#";
     public const POOL_MIN = 0;
     public const POOL_MAX = 10;
-
     private Generator $faker;
     public function __construct()
     {
@@ -23,21 +22,22 @@ class AccountFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; ++$i) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
-            $account = new Account();
-            $account
-                ->setName($this->faker->numerify('account-###'))
+            
+            $productType = new ProductType();
+            $productType
+                ->setName($this->faker->numerify('product type-###'))
+                ->setPrice($this->faker->randomFloat(2))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on')
             ;
-            $manager->persist($account);
-            $this->addReference(self::PREFIX . $i, $account);
+            $manager->persist($productType);
+            $this->addReference(self::PREFIX . $i, $productType);
         }
-
-
         $manager->flush();
+
     }
 }

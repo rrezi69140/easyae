@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\AccountRepository;
+use App\Repository\ProductTypeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 
-#[ORM\Entity(repositoryClass: AccountRepository::class)]
+#[ORM\Entity(repositoryClass: ProductTypeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Account
+class ProductType
 {
     use StatisticsPropertiesTrait;
 
@@ -21,8 +21,8 @@ class Account
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 24)]
-    private ?string $status = null;
+    #[ORM\Column]
+    private ?float $price = null;
 
     public function getId(): ?int
     {
@@ -41,14 +41,14 @@ class Account
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getPrice(): ?float
     {
-        return $this->status;
+        return $this->price;
     }
 
-    public function setStatus(string $status): static
+    public function setPrice(float $price): static
     {
-        $this->status = $status;
+        $this->price = $price;
 
         return $this;
     }
