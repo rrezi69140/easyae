@@ -10,6 +10,4 @@
 /vendor/
 .idea/
 ###< symfony/framework-bundle ###
-
-# Jetbrains
 .idea
