@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\InfoTypeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InfoTypeRepository::class)]
@@ -27,6 +29,17 @@ class InfoType
 
     #[ORM\Column(length: 24)]
     private ?string $status = null;
+
+    /**
+     * @var Collection<int, Info>
+     */
+    #[ORM\OneToMany(targetEntity: Info::class, mappedBy: 'type')]
+    private Collection $infos;
+
+    public function __construct()
+    {
+        $this->infos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -96,6 +109,36 @@ class InfoType
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Info>
+     */
+    public function getInfos(): Collection
+    {
+        return $this->infos;
+    }
+
+    public function addInfo(Info $info): static
+    {
+        if (!$this->infos->contains($info)) {
+            $this->infos->add($info);
+            $info->setType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInfo(Info $info): static
+    {
+        if ($this->infos->removeElement($info)) {
+            // set the owning side to null (unless already changed)
+            if ($info->getType() === $this) {
+                $info->setType(null);
+            }
+        }
 
         return $this;
     }
