@@ -7,7 +7,6 @@ use Faker\Generator;
 use App\Entity\Account;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 
 class AccountFixtures extends Fixture
 {
