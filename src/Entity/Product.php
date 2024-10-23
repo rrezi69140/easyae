@@ -20,9 +20,6 @@ class Product
     #[ORM\Column]
     private ?int $quantity = null;
 
-    #[ORM\Column(length: 24)]
-    private ?string $status = null;
-
     #[ORM\Column]
     private ?float $price = null;
 
@@ -42,18 +39,6 @@ class Product
     public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
 
         return $this;
     }
