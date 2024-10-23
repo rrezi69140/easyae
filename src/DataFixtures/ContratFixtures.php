@@ -24,15 +24,19 @@ class ContratFixtures extends Fixture
         $now = new \DateTime();
         for ($count = self::POOL_MIN; $count < self::POOL_MAX; $count++) {
             $contrat = new Contrat();
+
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
-            $date2 = new DateTime();
+
+            $dateStarted = $this->faker->dateTimeBetween($dateCreated, $now);
+            $dateEnded = $this->faker->dateTimeBetween($dateStarted, '+1 year');
+
             $contrat->setName($this->faker->numerify("Contrat-###"))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus("on")
-                ->setStartAt($dateUpdated)
-                ->setEndAt($date2->modify('+' . strval($count + 7) . ' days'))
+                ->setStartAt($dateStarted)
+                ->setEndAt($dateEnded)
                 ->setDone($this->faker->numberBetween(0, 1))
             ;
             $manager->persist($contrat);
