@@ -2,14 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\AccountRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+use App\Repository\ContactLinkTypeRepository;
+use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AccountRepository::class)]
-#[ORM\HasLifecycleCallbacks]
-class Account
+#[ORM\Entity(repositoryClass: ContactLinkTypeRepository::class)]
+class ContactLinkType
 {
     use StatisticsPropertiesTrait;
 
@@ -20,9 +18,6 @@ class Account
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
-
-    #[ORM\Column(length: 24)]
-    private ?string $status = null;
 
     public function getId(): ?int
     {
@@ -37,18 +32,6 @@ class Account
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
 
         return $this;
     }
