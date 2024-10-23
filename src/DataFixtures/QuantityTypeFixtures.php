@@ -21,13 +21,50 @@ class QuantityTypeFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $now = new \DateTime();
+        $quantityTypes = [
+            'kebab',
+            'euro',
+            'mètre',
+            'litre',
+            'kilogramme',
+            'pièce',
+            'paquet',
+            'boîte',
+            'bouteille',
+            'sachet',
+            'gramme',
+            'centimètre',
+            'millilitre',
+            'tonne',
+            'hectare',
+            'kilomètre',
+            'minute',
+            'heure',
+            'jour',
+            'semaine',
+            'mois',
+            'année',
+            'décennie',
+            'siècle',
+            'millénaire',
+            'joule',
+            'calorie',
+            'watt',
+            'ampère',
+            'volt',
+            'ohm',
+            'hertz',
+            'pascal',
+            'bar',
+            'newton',
+        ];
 
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $quantityType = new QuantityType();
             $quantityType
-                ->setName($this->faker->numerify('quantityType-###'))
+                ->setName($this->faker->randomElement($quantityTypes))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on');
