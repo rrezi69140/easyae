@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 class InfoTypeFixtures extends Fixture
 {
     
-    public const PREFIX = "InfoType";
+    public const PREFIX = "infoType";
     public const POOL_MIN = 0;
     public const POOL_MAX = 25;
     private Generator $faker;
@@ -28,7 +28,7 @@ class InfoTypeFixtures extends Fixture
         $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
         $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
         $infoType = new InfoType();
-        $infoType->setName("InfoType  ".$this->faker->word());
+        $infoType->setName($this->faker->word());
         $infoType->setInfo("Personal Info ");
         $infoType->setCreatedAt($dateCreated);
         $infoType->setupdateAt($dateUpdated);
