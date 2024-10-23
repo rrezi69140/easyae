@@ -5,20 +5,35 @@ namespace App\DataFixtures;
 use App\Entity\Info;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-
+use Faker\Generator;
+use Faker\Factory;
 class InfoFixtures extends Fixture
 {
+    public const PREFIX = "account#";
+    public const POOL_MIN = 0;
+    public const POOL_MAX = 10;
+    private Generator $faker;
+    public function __construct()
+    {
+        $this->faker = Factory::create("fr_FR");
+    }
     public function load(ObjectManager $manager): void
     {
+        $now = new \DateTime();
+
         for ($i = 0; $i < 20; $i++) {
+            $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
+            $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $info = new Info();
             $info->setAnonymous(false)
-            ->setInfo("Info $i")
-            ->setCreatedAt(new \DateTimeImmutable())
-            ->setUpdatedAt(new \DateTime())
-            ->setStatus("Alive");
+                ->setInfo($this->faker->numerify('info-###'))
+                ->setCreatedAt($dateCreated)
+                ->setUpdatedAt($dateUpdated)
+                ->setStatus($this->faker->boolean() ? "on" : "off");
             $manager->persist($info);
+            $this->addReference(self::PREFIX . $i, $info);
         }
+
         $manager->flush();
     }
 }
