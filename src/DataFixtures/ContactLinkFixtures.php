@@ -36,7 +36,7 @@ class ContactLinkFixtures extends Fixture
                 ->setStatus('on')
             ;
             $manager->persist($contactLink);
-            $this->addReference(name: self::PREFIX . $i, object: $dateCreated);
+            $this->addReference(name: self::PREFIX . $i, object: $contactLink);
         }
 
         $manager->flush();
