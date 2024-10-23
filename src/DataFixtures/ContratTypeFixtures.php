@@ -10,6 +10,10 @@ use Faker\Generator;
 
 class ContratTypeFixtures extends Fixture
 {
+    public const PREFIX = "contratType#";
+    public const POOL_MIN = 0;
+    public const POOL_MAX = 10;
+
     private Generator $faker;
 
     public function __construct()
@@ -21,7 +25,7 @@ class ContratTypeFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $contratType = new ContratType();
@@ -34,6 +38,7 @@ class ContratTypeFixtures extends Fixture
             ;
 
             $manager->persist($contratType);
+            $this->addReference(self::PREFIX . $i, $contratType);
         }
 
         $manager->flush();
