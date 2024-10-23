@@ -3,14 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\ContactRepository;
+use App\Entity\Traits\StatisticsPropertiesTrait;
+
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\DBAL\Types\Types;
-// use Doctrine\Common\Collections\ArrayCollection;
-// use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 class Contact
 {
+
+    use StatisticsPropertiesTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,26 +21,6 @@ class Contact
     #[ORM\Column(length: 15)]
     private ?string $name = null;
 
-    // #[ORM\OneToMany(targetEntity: ContactLink::class, mappedBy: "contact", cascade: ["persist", "remove"])]
-    // private Collection $links;
-
-    // #[ORM\ManyToOne(targetEntity: Fonction::class, inversedBy: "contacts")]
-    // #[ORM\JoinColumn(nullable: false)]
-    // private ?Fonction $fonction = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdAt = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updatedAt = null;
-
-    #[ORM\Column(length: 24)]
-    private ?string $status = null;
-
-    // public function __construct()
-    // {
-    //     $this->links = new ArrayCollection();
-    // }
 
     public function getId(): ?int
     {
@@ -56,37 +38,6 @@ class Contact
 
         return $this;
     }
-
-    // /**
-    //  * @return Collection<int, ContactLink>
-    //  */
-    // public function getLinks(): Collection
-    // {
-    //     return $this->links;
-    // }
-
-    // public function addLink(ContactLink $link): self
-    // {
-    //     if (!$this->links->contains($link)) {
-    //         $this->links[] = $link;
-    //         $link->setContact($this);
-    //     }
-
-    //     return $this;
-    // }
-
-
-    // public function getFonction(): ?Fonction
-    // {
-    //     return $this->fonction;
-    // }
-
-    // public function setFonction(?Fonction $fonction): self
-    // {
-    //     $this->fonction = $fonction;
-
-    //     return $this;
-    // }
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
@@ -112,15 +63,4 @@ class Contact
         return $this;
     }
 
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
-
-        return $this;
-    }
 }
