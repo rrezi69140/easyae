@@ -25,14 +25,17 @@ class ClientFixtures extends Fixture
     {
         $now = new \DateTime();
 
+        $types = [1, 2, 3];
+        $quantityTypes = [101, 102, 103];
+
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeBetween('-1 year', 'now');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
 
             $client = new Client();
             $client
-                ->setType($this->faker->randomElement(['Business', 'Individual']))
-                ->setQuantityType($this->faker->randomElement(['kg', 'liters', 'pieces']))
+                ->setType((string) $this->faker->randomElement($types))
+                ->setQuantityType((string) $this->faker->randomElement($quantityTypes))
                 ->setQuantity((string) $this->faker->numberBetween(1, 1000))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
