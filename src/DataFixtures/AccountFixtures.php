@@ -2,11 +2,17 @@
 
 namespace App\DataFixtures;
 
+<<<<<<< HEAD
 use Faker\Factory;
 use Faker\Generator;
 use App\Entity\Account;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+=======
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+use App\Entity\Account;
+>>>>>>> 9760fd3 (fix(facturation): :bug:)
 
 class AccountFixtures extends Fixture
 {
@@ -37,6 +43,7 @@ class AccountFixtures extends Fixture
             $manager->persist($account);
             $this->addReference(self::PREFIX . $i, $account);
         }
+
 
         $manager->flush();
     }
