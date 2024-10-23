@@ -7,9 +7,10 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Faker\Factory;
+
 class InfoFixtures extends Fixture
 {
-    public const PREFIX = "account#";
+    public const PREFIX = "info#";
     public const POOL_MIN = 0;
     public const POOL_MAX = 10;
     private Generator $faker;
@@ -21,11 +22,12 @@ class InfoFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $info = new Info();
-            $info->setAnonymous(false)
+            $info
+                ->setAnonymous($this->faker->boolean(20))
                 ->setInfo($this->faker->numerify('info-###'))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
