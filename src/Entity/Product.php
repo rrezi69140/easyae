@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\StatisticsPropertiesTrait;
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
@@ -25,6 +27,17 @@ class Product
 
     #[ORM\Column]
     private ?float $priceUnit = null;
+
+    /**
+     * @var Collection<int, Contrat>
+     */
+    #[ORM\ManyToMany(targetEntity: Contrat::class, mappedBy: 'products')]
+    private Collection $contrats;
+
+    public function __construct()
+    {
+        $this->contrats = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -63,6 +76,33 @@ class Product
     public function setPriceUnit(float $priceUnit): static
     {
         $this->priceUnit = $priceUnit;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contrat>
+     */
+    public function getContrats(): Collection
+    {
+        return $this->contrats;
+    }
+
+    public function addContrat(Contrat $contrat): static
+    {
+        if (!$this->contrats->contains($contrat)) {
+            $this->contrats->add($contrat);
+            $contrat->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContrat(Contrat $contrat): static
+    {
+        if ($this->contrats->removeElement($contrat)) {
+            $contrat->removeProduct($this);
+        }
 
         return $this;
     }
