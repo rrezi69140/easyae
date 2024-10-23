@@ -10,6 +10,9 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class ProductTypeFixtures extends Fixture
 {
+    public const PREFIX = "productType#";
+    public const POOL_MIN = 0;
+    public const POOL_MAX = 10;
     private Generator $faker;
     public function __construct()
     {
@@ -19,7 +22,7 @@ class ProductTypeFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = 0; $i < 20; ++$i) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; ++$i) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             
@@ -32,6 +35,7 @@ class ProductTypeFixtures extends Fixture
                 ->setStatus('on')
             ;
             $manager->persist($productType);
+            $this->addReference(self::PREFIX . $i, $productType);
         }
         $manager->flush();
 
