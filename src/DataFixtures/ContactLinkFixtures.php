@@ -13,7 +13,6 @@ class ContactLinkFixtures extends Fixture
         for ($i = 0; $i < 10; $i++) {
             $contactLink = new ContactLink();
             $contactLink->setValue('test_value');
-            $contactLink->setType('test_type');
             $contactLink->setCreatedAt(new \DateTime());
             $contactLink->setUpdatedAt(new \DateTime());
             $contactLink->setStatus('test_status');
