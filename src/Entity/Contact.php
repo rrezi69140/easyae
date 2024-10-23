@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
-use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ContactRepository;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 
-#[ORM\Entity(repositoryClass: ClientRepository::class)]
-class Client
-{
+use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity(repositoryClass: ContactRepository::class)]
+class Contact
+{
 
     use StatisticsPropertiesTrait;
 
@@ -18,7 +18,7 @@ class Client
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 15)]
     private ?string $name = null;
 
 
@@ -38,6 +38,6 @@ class Client
 
         return $this;
     }
+
+
 }
-
-

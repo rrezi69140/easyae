@@ -23,12 +23,14 @@ class ClientFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $client = new Client();
             $client->setName($this->faker->company);
             $client->setCreatedAt($this->faker->dateTimeBetween('-2 year', 'now'));
             $client->setUpdatedAt($this->faker->dateTimeBetween('-1 year', 'now'));
             $client->setStatus($this->faker->randomElement(['on', 'off']));
+
 
             $manager->persist($client);
 
