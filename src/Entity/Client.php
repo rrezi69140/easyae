@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\ClientRepository;
+
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
+
     use StatisticsPropertiesTrait;
 
     #[ORM\Id]
@@ -18,6 +21,7 @@ class Client
 
     #[ORM\Column(length: 255)]
     private ?string $quantity = null;
+
 
     #[ORM\Column(length: 255)]
     private ?string $price = null;
