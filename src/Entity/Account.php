@@ -5,13 +5,13 @@ namespace App\Entity;
 use App\Repository\AccountRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Traits\TimestampableTrait;
+use App\Entity\Traits\StatisticsPropertiesTrait;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Account
 {
-    use TimestampableTrait;
+    use StatisticsPropertiesTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

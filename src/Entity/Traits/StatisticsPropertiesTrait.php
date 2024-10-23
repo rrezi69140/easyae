@@ -5,13 +5,31 @@ namespace App\Entity\Traits;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-trait TimestampableTrait
+trait StatisticsPropertiesTrait
 {
+
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    #[ORM\Column(length: 24)]
+    private ?string $status = null;
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
@@ -20,7 +38,10 @@ trait TimestampableTrait
 
     public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
-        $this->createdAt = $createdAt;
+        if (is_null($this->getCreatedAt())) {
+            $this->createdAt = $createdAt;
+
+        }
 
         return $this;
     }
@@ -49,4 +70,7 @@ trait TimestampableTrait
     {
         $this->setUpdatedAt(new \DateTime());
     }
+
+
+
 }
