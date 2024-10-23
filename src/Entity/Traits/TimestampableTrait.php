@@ -40,13 +40,13 @@ trait TimestampableTrait
     #[ORM\PrePersist]
     public function initializeTimestamps(): void
     {
-        $this->createdAt = $this->createdAt ?? new \DateTime();
-        $this->updatedAt = new \DateTime();
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
     }
 
     #[ORM\PreUpdate]
     public function updateTimestamp(): void
     {
-        $this->updatedAt = new \DateTime();
+        $this->setUpdatedAt(new \DateTime());
     }
 }
