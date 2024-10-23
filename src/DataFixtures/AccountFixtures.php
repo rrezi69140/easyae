@@ -11,6 +11,10 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 class AccountFixtures extends Fixture
 {
 
+
+    public const PREFIX = "account#";
+    public const POOL_MIN = 0;
+    public const POOL_MAX = 10;
     private Generator $faker;
     public function __construct()
     {
@@ -20,7 +24,7 @@ class AccountFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $account = new Account();
@@ -30,8 +34,8 @@ class AccountFixtures extends Fixture
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on')
             ;
-            // $account->setCreatedAt(new \DateTime());
             $manager->persist($account);
+            $this->addReference(self::PREFIX . $i, $account);
         }
 
         $manager->flush();
