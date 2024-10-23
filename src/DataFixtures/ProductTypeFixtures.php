@@ -29,7 +29,7 @@ class ProductTypeFixtures extends Fixture
             $productType = new ProductType();
             $productType
                 ->setName($this->faker->numerify('product type-###'))
-                ->setPrice(price: 10.3 + $i)
+                ->setPrice($this->faker->randomFloat(2))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on')
