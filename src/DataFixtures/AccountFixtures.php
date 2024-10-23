@@ -37,6 +37,7 @@ class AccountFixtures extends Fixture
             $this->addReference(self::PREFIX . $i, $account);
         }
 
+
         $manager->flush();
     }
 }
