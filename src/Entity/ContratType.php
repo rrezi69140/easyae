@@ -23,7 +23,7 @@ class ContratType
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 24)]
     private ?string $status = null;
 
     public function getId(): ?int
