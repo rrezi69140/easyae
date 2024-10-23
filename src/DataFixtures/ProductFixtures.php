@@ -11,6 +11,10 @@ use Faker\Generator;
 class ProductFixtures extends Fixture
 {
 
+    public const PREFIX = "product#";
+    public const PRODUCT_POOL_MIN = 0;
+    public const PRODUCT_POOL_MAX = 20;
+
     private Generator $faker;
     public function __construct()
     {
@@ -20,7 +24,7 @@ class ProductFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = 0; $i < 20; ++$i) {
+        for ($i = self::PRODUCT_POOL_MIN; $i < self::PRODUCT_POOL_MAX; ++$i) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $product = new Product();
@@ -33,6 +37,7 @@ class ProductFixtures extends Fixture
                 ->setPrice($this->faker->randomFloat(2, 10, 100))
                 ->setPriceUnit($this->faker->randomFloat(2, 10, 100));
             $manager->persist($product);
+            $this->addReference(self::PREFIX . $i, $product);
         }
 
         $manager->flush();
