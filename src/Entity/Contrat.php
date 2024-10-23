@@ -20,7 +20,6 @@ class Contrat
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
-
     // #[ORM\Column]
     // private ?int $typeID = null;
 
