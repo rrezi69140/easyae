@@ -12,8 +12,8 @@ class ProductFixtures extends Fixture
 {
 
     public const PREFIX = "product#";
-    public const PRODUCT_POOL_MIN = 0;
-    public const PRODUCT_POOL_MAX = 20;
+    public const POOL_MIN = 0;
+    public const POOL_MAX = 20;
 
     private Generator $faker;
     public function __construct()
@@ -24,11 +24,11 @@ class ProductFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = self::PRODUCT_POOL_MIN; $i < self::PRODUCT_POOL_MAX; ++$i) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; ++$i) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $product = new Product();
-            $statuses = ['OK', 'Failed', 'Pending'];
+            $statuses = ['on', 'off'];
             $product
                 ->setQuantity($this->faker->randomDigit())
                 ->setCreatedAt($dateCreated)
