@@ -25,7 +25,7 @@ class Fonction
     #[ORM\Column]
     private ?\DateTime $updatedAt = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 24)]
     private ?string $status = null;
 
     public function getId(): ?int
