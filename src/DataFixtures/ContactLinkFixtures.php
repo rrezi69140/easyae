@@ -30,7 +30,6 @@ class ContactLinkFixtures extends Fixture
             $contactLink = new ContactLink();
             $contactLink
                 ->setValue($this->faker->numerify('contact-###'))
-                ->setType($this->faker->numerify('type-###'))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on')
