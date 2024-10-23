@@ -24,9 +24,6 @@ class ProductType
     #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\Column(length: 24)]
-    private ?string $status = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -52,18 +49,6 @@ class ProductType
     public function setPrice(float $price): static
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
 
         return $this;
     }
