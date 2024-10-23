@@ -18,11 +18,11 @@ class FonctionFixtures extends Fixture
         for ($i = 0; $i < 10; $i++) {
             $fonction = new Fonction();
 
-            $fonction->setName($faker->jobTitle());  // Génère un nom de fonction aléatoire
-            $fonction->setType($faker->word());      // Génère un mot aléatoire pour le type
-            $fonction->setCreatedAt($faker->dateTimeBetween('-2 years', 'now'));  // Date aléatoire entre il y a 2 ans et aujourd'hui
-            $fonction->setUpdatedAt($faker->dateTimeBetween('-1 years', 'now'));  // Date aléatoire entre il y a 1 an et aujourd'hui
-            $fonction->setStatus($faker->randomElement(['on', 'off']));  // Statut aléatoire "on" ou "off"
+            $fonction->setName($faker->jobTitle());  
+            $fonction->setType($faker->word());     
+            $fonction->setCreatedAt($faker->dateTimeBetween('-2 years', 'now'));  
+            $fonction->setUpdatedAt($faker->dateTimeBetween('-1 years', 'now')); 
+            $fonction->setStatus($faker->randomElement(['on', 'off']));
 
             $manager->persist($fonction);
             $this->addReference(self::PREFIX,$i, $fonction);
