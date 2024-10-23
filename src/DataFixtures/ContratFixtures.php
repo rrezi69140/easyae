@@ -28,8 +28,8 @@ class ContratFixtures extends Fixture
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
 
-            $dateStarted = $this->faker->dateTimeBetween($dateCreated, '+1 year');
-            $dateEnded = $this->faker->dateTimeBetween($dateStarted, '+1 year');
+            $dateStarted = $this->faker->dateTimeInInterval('-2 year', '+2 year');
+            $dateEnded = $this->faker->dateTimeBetween($dateStarted, '+4 year');
 
             $contrat->setName($this->faker->numerify("Contrat-###"))
                 ->setCreatedAt($dateCreated)
