@@ -14,7 +14,7 @@ class Facturation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 24)]
     private ?string $status = null;
 
     #[ORM\Column(length: 255)]
