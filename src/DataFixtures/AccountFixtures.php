@@ -10,11 +10,10 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class AccountFixtures extends Fixture
 {
-
-
     public const PREFIX = "account#";
     public const POOL_MIN = 0;
     public const POOL_MAX = 10;
+
     private Generator $faker;
     public function __construct()
     {
