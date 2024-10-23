@@ -10,6 +10,9 @@ use Doctrine\Persistence\ObjectManager;
 
 class QuantityTypeFixtures extends Fixture
 {
+    public const PREFIX = "quantityType#";
+    public const POOL_MIN = 0;
+    public const POOL_MAX = 10;
     private Generator $faker;
     public function __construct()
     {
@@ -19,18 +22,18 @@ class QuantityTypeFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = 0; $i < 10; $i++) {
-            $dateCreated = $this->faker->dateTimeInInterval('-2 year', '+1 year');
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
+            $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $quantityType = new QuantityType();
             $quantityType
-                ->setName($this->faker->numerify('quantity type-###'))
+                ->setName($this->faker->numerify('quantityType-###'))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on');
             $manager->persist($quantityType);
-
-            $manager->flush();
+            $this->addReference(self::PREFIX . $i, $quantityType);
         }
+        $manager->flush();
     }
 }
