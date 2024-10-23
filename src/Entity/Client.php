@@ -10,7 +10,6 @@ use App\Entity\Traits\StatisticsPropertiesTrait;
 class Client
 {
 
-
     use StatisticsPropertiesTrait;
 
     #[ORM\Id]
@@ -20,7 +19,6 @@ class Client
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
-
 
     public function getId(): ?int
     {
