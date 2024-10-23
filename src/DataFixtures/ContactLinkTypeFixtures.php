@@ -10,6 +10,9 @@ use Faker\Generator;
 
 class ContactLinkTypeFixtures extends Fixture
 {
+    public const PREFIX = "contactLinkType#";
+    public const POOL_MIN = 0;
+    public const POOL_MAX = 10;
     private Generator $faker;
     public function __construct()
     {
@@ -20,7 +23,7 @@ class ContactLinkTypeFixtures extends Fixture
     {
         $now = new \DateTime();
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $contactLinkType = new ContactLinkType();
@@ -31,6 +34,7 @@ class ContactLinkTypeFixtures extends Fixture
                 ->setStatus('on')
             ;
             $manager->persist($contactLinkType);
+            $this->addReference(self::PREFIX . $i, $contactLinkType);
         }
 
         $manager->flush();
