@@ -11,7 +11,7 @@ use App\Entity\Facturation;
 class FacturationFixtures extends Fixture
 {
 
-    public const PREFIX = "account#";
+    public const PREFIX = "facturation#";
     public const PPOL_MIN = 0;
     public const PPOL_MAX = 20;
 
@@ -31,7 +31,7 @@ class FacturationFixtures extends Fixture
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
             $facturation = new Facturation();
             $facturation
-                ->setName($this->faker->numerify('account-###'))
+                ->setName($this->faker->numerify('facturation-###'))
                 ->setStatus("on")
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
