@@ -20,10 +20,10 @@ class InfoType
     private ?string $info = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?\DateTime $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $updateAt = null;
+    private ?\DateTime $updateAt = null;
 
     #[ORM\Column(length: 24)]
     private ?string $status = null;
@@ -64,24 +64,24 @@ class InfoType
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(\DateTime $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdateAt(): ?\DateTimeImmutable
+    public function getUpdateAt(): ?\DateTime
     {
         return $this->updateAt;
     }
 
-    public function setUpdateAt(\DateTimeImmutable $updateAt): static
+    public function setUpdateAt(\DateTime $updateAt): static
     {
         $this->updateAt = $updateAt;
 
