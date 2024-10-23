@@ -2,9 +2,9 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Account;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use App\Entity\Account;
 
 class AccountFixtures extends Fixture
 {
@@ -17,7 +17,6 @@ class AccountFixtures extends Fixture
             ->setUpdatedAt(new \DateTime())
             ->setStatus('on')
         ;
-        // $account->setCreatedAt(new \DateTime());
         $manager->persist($account);
 
         $manager->flush();
