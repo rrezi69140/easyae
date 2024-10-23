@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\AccountRepository;
+use App\Repository\ContactLinkTypeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AccountRepository::class)]
-class Account
+#[ORM\Entity(repositoryClass: ContactLinkTypeRepository::class)]
+class ContactLinkType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,14 +23,13 @@ class Account
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\Column(length: 24)]
+    #[ORM\Column(length: 25)]
     private ?string $status = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
 
     public function getName(): ?string
     {
@@ -79,6 +78,4 @@ class Account
 
         return $this;
     }
-
-
 }
