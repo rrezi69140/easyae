@@ -4,10 +4,12 @@ namespace App\Entity;
 
 use App\Repository\InfoTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\StatisticsPropertiesTrait;
 
 #[ORM\Entity(repositoryClass: InfoTypeRepository::class)]
 class InfoType
 {
+    use StatisticsPropertiesTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -18,12 +20,6 @@ class InfoType
 
     #[ORM\Column(length: 255)]
     private ?string $info = null;
-
-    #[ORM\Column]
-    private ?\DateTime $createdAt = null;
-
-    #[ORM\Column]
-    private ?\DateTime $updateAt = null;
 
     #[ORM\Column(length: 24)]
     private ?string $status = null;
@@ -64,29 +60,7 @@ class InfoType
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTime $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdateAt(): ?\DateTime
-    {
-        return $this->updateAt;
-    }
-
-    public function setUpdateAt(\DateTime $updateAt): static
-    {
-        $this->updateAt = $updateAt;
-
-        return $this;
-    }
+    
 
     public function getStatus(): ?string
     {

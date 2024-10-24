@@ -31,7 +31,7 @@ class InfoTypeFixtures extends Fixture
         $infoType->setName($this->faker->word());
         $infoType->setInfo("Personal Info ");
         $infoType->setCreatedAt($dateCreated);
-        $infoType->setupdateAt($dateUpdated);
+        $infoType->setUpdatedAt($dateUpdated);
         $infoType->setStatus('on')
        ;
        $manager->persist($infoType);
