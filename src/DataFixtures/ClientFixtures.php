@@ -26,6 +26,7 @@ class ClientFixtures extends Fixture
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $client = new Client();
             $client->setName($this->faker->company);
+
             $createdAt = $this->faker->dateTimeBetween('-2 years', 'now');
             $client->setCreatedAt($createdAt);
             $client->setUpdatedAt($this->faker->dateTimeBetween($createdAt, 'now'));

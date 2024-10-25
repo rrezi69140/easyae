@@ -2,24 +2,33 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\StatisticsPropertiesTrait;
 use App\Repository\ContactLinkRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ContactLinkRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 
 class ContactLink
 {
+    use StatisticsPropertiesTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['contactLink'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['contactLink'])]
     private ?string $value = null;
 
+    #[ORM\ManyToOne(inversedBy: 'link')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Contact $contact = null;
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['contactLink'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -27,6 +36,10 @@ class ContactLink
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
+
+    #[ORM\ManyToOne(inversedBy: 'contactLinks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ContactLinkType $contactLinkType = null;
 
     public function getId(): ?int
     {
@@ -45,38 +58,26 @@ class ContactLink
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getContact(): ?Contact
     {
-        return $this->createdAt;
+        return $this->contact;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    public function setContact(?Contact $contact): static
     {
-        $this->createdAt = $createdAt;
+        $this->contact = $contact;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getContactLinkType(): ?ContactLinkType
     {
-        return $this->updatedAt;
+        return $this->contactLinkType;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): static
+    public function setContactLinkType(?ContactLinkType $contactLinkType): static
     {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
+        $this->contactLinkType = $contactLinkType;
 
         return $this;
     }

@@ -30,4 +30,19 @@ class ProductTypeController extends AbstractController
 
         return new JsonResponse($productTypeJson, Response::HTTP_OK, [], true);
     }
+
+    #[Route(name: 'api_product_type_new', methods: ["POST"])]
+    public function create(Request $request, ProductTypeRepository $productTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $productType = $serializer->deserialize($request->getContent(), ProductType::class, 'json', []);
+        $productType->setClient($productType)
+            ->setStatus("on")
+        ;
+        $entityManager->persist($productType);
+        $entityManager->flush();
+        $productTypeJson = $serializer->serialize($productType, 'json', ['groups' => "productType"]);
+        return new JsonResponse($productTypeJson, JsonResponse::HTTP_OK, [], true);
+    }
+
+
 }

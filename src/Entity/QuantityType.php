@@ -23,7 +23,7 @@ class QuantityType
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['quantityType'])]
+    #[Groups(['product', 'quantityType'])]
     private ?string $name = null;
 
     /**
