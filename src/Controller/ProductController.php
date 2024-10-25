@@ -23,7 +23,7 @@ class ProductController extends AbstractController
     {
         $productList = $productRepository->findAll();
 
-        $productJson = $serializer->serialize($productList, 'json', ['groups' => ["product", "productType", "quantityType"]]);
+        $productJson = $serializer->serialize($productList, 'json', ['groups' => "product"]);
 
         return new JsonResponse($productJson, Response::HTTP_OK, [], true);
     }
@@ -32,7 +32,7 @@ class ProductController extends AbstractController
     public function get(Product $product, SerializerInterface $serializer): JsonResponse
     {
 
-        $productJson = $serializer->serialize($product, 'json', ['groups' => ["product", "productType", "quantityType"]]);
+        $productJson = $serializer->serialize($product, 'json', ['groups' => "product"]);
 
 
         return new JsonResponse($productJson, Response::HTTP_OK, [], true);
@@ -53,7 +53,7 @@ class ProductController extends AbstractController
         $entityManager->persist($product);
         $entityManager->flush();
 
-        $productJson = $serializer->serialize($product, 'json', ['groups' => ["product", "productType", "quantityType"]]);
+        $productJson = $serializer->serialize($product, 'json', ['groups' => "product"]);
         return new JsonResponse($productJson, Response::HTTP_CREATED, [], true);
     }
 }
