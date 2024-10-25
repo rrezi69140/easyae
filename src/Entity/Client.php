@@ -26,18 +26,6 @@ class Client
 
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['account'])]
-
-    private ?string $quantity = null;
-
-
-    #[ORM\Column(length: 255)]
-    private ?string $price = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $priceUnit = null;
-
     /**
      * @var Collection<int, Account>
      */

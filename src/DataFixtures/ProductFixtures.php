@@ -48,7 +48,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
                 ->setQuantity($this->faker->randomDigit())
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
-                ->setStatus($statuses[rand(0, count($statuses)-1)])
+                ->setStatus($statuses[rand(0, count($statuses) - 1)])
                 ->setPrice($this->faker->randomFloat(2, 10, 100))
                 ->setPriceUnit($this->faker->randomFloat(2, 10, 100));
             $manager->persist($product);
@@ -63,7 +63,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         return [
             ProductTypeFixtures::class,
             QuantityTypeFixtures::class
-          
+
         ];
     }
 
