@@ -2,15 +2,15 @@
 
 namespace App\DataFixtures;
 
-use Faker\Factory;
-use Faker\Generator;
-use App\Entity\ContactLink;
+use App\Entity\ContactLinkType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
+use Faker\Generator;
 
-class ContactLinkFixtures extends Fixture
+class ContactLinkTypeFixtures extends Fixture
 {
-    public const PREFIX = "dateCreated#";
+    public const PREFIX = "contactLinkType#";
     public const POOL_MIN = 0;
     public const POOL_MAX = 10;
     private Generator $faker;
@@ -21,21 +21,20 @@ class ContactLinkFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-
         $now = new \DateTime();
 
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
-            $contactLink = new ContactLink();
-            $contactLink
-                ->setValue($this->faker->numerify('contact-###'))
+            $contactLinkType = new ContactLinkType();
+            $contactLinkType
+                ->setName($this->faker->numerify('contact-link-type-###'))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on')
             ;
-            $manager->persist($contactLink);
-            $this->addReference(name: self::PREFIX . $i, object: $contactLink);
+            $manager->persist($contactLinkType);
+            $this->addReference(self::PREFIX . $i, $contactLinkType);
         }
 
         $manager->flush();

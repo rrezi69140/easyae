@@ -4,13 +4,13 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use Faker\Generator;
-use App\Entity\ContactLink;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\ProductType;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 
-class ContactLinkFixtures extends Fixture
+class ProductTypeFixtures extends Fixture
 {
-    public const PREFIX = "dateCreated#";
+    public const PREFIX = "productType#";
     public const POOL_MIN = 0;
     public const POOL_MAX = 10;
     private Generator $faker;
@@ -18,26 +18,26 @@ class ContactLinkFixtures extends Fixture
     {
         $this->faker = Factory::create('fr_FR');
     }
-
     public function load(ObjectManager $manager): void
     {
-
         $now = new \DateTime();
 
-        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; ++$i) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
-            $contactLink = new ContactLink();
-            $contactLink
-                ->setValue($this->faker->numerify('contact-###'))
+            
+            $productType = new ProductType();
+            $productType
+                ->setName($this->faker->numerify('product type-###'))
+                ->setPrice($this->faker->randomFloat(2))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on')
             ;
-            $manager->persist($contactLink);
-            $this->addReference(name: self::PREFIX . $i, object: $contactLink);
+            $manager->persist($productType);
+            $this->addReference(self::PREFIX . $i, $productType);
         }
-
         $manager->flush();
+
     }
 }

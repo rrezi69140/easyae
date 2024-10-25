@@ -2,43 +2,42 @@
 
 namespace App\Repository;
 
-use App\Entity\ContactLink;
+use App\Entity\ProductType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ContactLink>
+ * @extends ServiceEntityRepository<ProductType>
  */
-class ContactLinkRepository extends ServiceEntityRepository
+class ProductTypeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ContactLink::class);
+        parent::__construct($registry, ProductType::class);
     }
 
     //    /**
-    //     * @return ContactLink[] Returns an array of ContactLink objects
+    //     * @return ProductType[] Returns an array of ProductType objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
+    //            ->orderBy('p.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?ContactLink
+    //    public function findOneBySomeField($value): ?ProductType
     //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()
     //        ;
     //    }
-
 }
