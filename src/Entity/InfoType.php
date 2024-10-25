@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 
 #[ORM\Entity(repositoryClass: InfoTypeRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class InfoType
 {
     use StatisticsPropertiesTrait;
@@ -73,7 +75,7 @@ class InfoType
         return $this;
     }
 
-    
+
 
     public function getStatus(): ?string
     {
