@@ -26,7 +26,7 @@ class Facturation
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToOne(targetEntity: "App\Entity\Contrat", inversedBy: 'facturation')]
+    #[ORM\OneToOne(targetEntity: Contrat::class, inversedBy: 'facturation')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Contrat $contrat = null;
 

@@ -22,7 +22,7 @@ class Client
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['account'])]
+    #[Groups(['account', 'contrat'])]
 
     private ?int $id = null;
 
@@ -93,5 +93,3 @@ class Client
         return $this;
     }
 }
-
-

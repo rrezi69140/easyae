@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Contrat;
 use App\Repository\ContratRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,15 @@ class ContratController extends AbstractController
 
         $contratJson = $serializer->serialize($contratList, 'json', ['groups' => "contrat"]);
 
+
+        return new JsonResponse($contratJson, JsonResponse::HTTP_OK, [], true);
+    }
+
+    #[Route(path: "/{id}", name: 'api_contrat_show', methods: ["GET"])]
+    public function get(Contrat $contrat, SerializerInterface $serializer): JsonResponse
+    {
+
+        $contratJson = $serializer->serialize($contrat, 'json', ['groups' => "contrat"]);
 
         return new JsonResponse($contratJson, JsonResponse::HTTP_OK, [], true);
     }
