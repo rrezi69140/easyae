@@ -8,6 +8,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InfoRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class Info
 {
 

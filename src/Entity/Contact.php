@@ -8,6 +8,8 @@ use App\Entity\Traits\StatisticsPropertiesTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class Contact
 {
 

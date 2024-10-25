@@ -7,6 +7,8 @@ use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class Product
 {
 
@@ -80,6 +82,7 @@ class Product
     public function setType(?ProductType $type): static
     {
         $this->type = $type;
+    }
     public function getQuantityType(): ?QuantityType
     {
         return $this->quantityType;
