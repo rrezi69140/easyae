@@ -18,19 +18,19 @@ class InfoType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['infoType'])]
+    #[Groups(['infoType', 'info'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['infoType'])]
+    #[Groups(['infoType', 'info'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['infoType'])]
+    #[Groups(['infoType', 'info'])]
     private ?string $info = null;
 
     #[ORM\Column(length: 24)]
-    #[Groups(['infoType'])]
+    #[Groups(['infoType', 'info'])]
     private ?string $status = null;
 
     /**
