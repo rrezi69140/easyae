@@ -2,12 +2,13 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Product;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
+use App\Entity\Product;
+use Doctrine\Persistence\ObjectManager;
+use App\DataFixtures\QuantityTypeFixtures;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class ProductFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -28,6 +29,11 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         $typeRefs = [];
         for ($i = ProductTypeFixtures::POOL_MIN; $i < ProductTypeFixtures::POOL_MAX; $i++) {
             $typeRefs[] = $prefix . $i;
+            $prefixQuantityType = QuantityTypeFixtures::PREFIX;
+        }
+        $quantityTypeRefs = [];
+        for ($i = QuantityTypeFixtures::POOL_MIN; $i < QuantityTypeFixtures::POOL_MAX; $i++) {
+            $quantityTypeRefs[] = $prefixQuantityType . $i;
         }
 
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; ++$i) {
@@ -38,6 +44,11 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
             $statuses = ['on', 'off'];
             $product
                 ->setType($type)
+            $quantityType = $this->getReference($quantityTypeRefs[array_rand($quantityTypeRefs, 1)]);
+            $product = new Product();
+            $statuses = ['on', 'off'];
+            $product
+                ->setQuantityType($quantityType)
                 ->setQuantity($this->faker->randomDigit())
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
@@ -55,6 +66,9 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             ProductTypeFixtures::class,
+            QuantityTypeFixtures::class
+          
         ];
     }
+
 }

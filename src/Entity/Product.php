@@ -29,6 +29,7 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
     private ?ProductType $type = null;
+    private ?QuantityType $quantityType = null;
 
     public function getId(): ?int
     {
@@ -79,6 +80,14 @@ class Product
     public function setType(?ProductType $type): static
     {
         $this->type = $type;
+    public function getQuantityType(): ?QuantityType
+    {
+        return $this->quantityType;
+    }
+
+    public function setQuantityType(?QuantityType $quantityType): static
+    {
+        $this->quantityType = $quantityType;
 
         return $this;
     }
