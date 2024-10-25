@@ -21,6 +21,7 @@ class ContactLink
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['contactLink'])]
     private ?string $value = null;
 
     #[ORM\ManyToOne(inversedBy: 'link')]
