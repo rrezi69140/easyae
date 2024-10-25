@@ -38,12 +38,12 @@ class ContactLinkController extends AbstractController
     }
 
     #[Route(name: 'api_contact_link_new', methods: ["POST"])]
-    public function create(Request $request, ContactLinkTypeRepository $contactLinkTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function create(Request $request, ContactLinkRepository $contactLinkRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
-        $contactLinkType = $contactLinkTypeRepository->find($data["contactLinkType"]);
+        $contactLink = $contactLinkRepository->find($data["contactLink"]);
         $contactLink = $serializer->deserialize($request->getContent(), ContactLink::class, 'json', []);
-        $contactLink->setClient($contactLinkType)
+        $contactLink->setClient($contactLink)
             ->setStatus("on")
         ;
         $entityManager->persist($contactLink);

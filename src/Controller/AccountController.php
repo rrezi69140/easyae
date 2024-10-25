@@ -73,7 +73,7 @@ class AccountController extends AbstractController
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
     #[Route(path: "/{id}", name: 'api_account_delete', methods: ["DELETE"])]
-    public function delete(Account $account, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(Account $account, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
