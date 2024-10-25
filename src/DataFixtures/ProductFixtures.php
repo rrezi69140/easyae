@@ -25,7 +25,12 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $now = new \DateTime();
-        $prefixQuantityType = QuantityTypeFixtures::PREFIX;
+        $prefix = ProductTypeFixtures::PREFIX;
+        $typeRefs = [];
+        for ($i = ProductTypeFixtures::POOL_MIN; $i < ProductTypeFixtures::POOL_MAX; $i++) {
+            $typeRefs[] = $prefix . $i;
+            $prefixQuantityType = QuantityTypeFixtures::PREFIX;
+        }
         $quantityTypeRefs = [];
         for ($i = QuantityTypeFixtures::POOL_MIN; $i < QuantityTypeFixtures::POOL_MAX; $i++) {
             $quantityTypeRefs[] = $prefixQuantityType . $i;
@@ -34,6 +39,11 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; ++$i) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
+            $type = $this->getReference($typeRefs[array_rand($typeRefs, 1)]);
+            $product = new Product();
+            $statuses = ['on', 'off'];
+            $product
+                ->setType($type)
             $quantityType = $this->getReference($quantityTypeRefs[array_rand($quantityTypeRefs, 1)]);
             $product = new Product();
             $statuses = ['on', 'off'];
@@ -52,10 +62,12 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
+            ProductTypeFixtures::class,
             QuantityTypeFixtures::class
+          
         ];
     }
 
