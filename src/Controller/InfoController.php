@@ -46,9 +46,7 @@ class InfoController extends AbstractController
         $data = $request->toArray();
         $infoType = $infoTypeRepository->find($data["type"]);
         $info = $serializer->deserialize($request->getContent(), Info::class, 'json', []);
-        $info->setAnonymous($data["isAnonymous"])
-            ->setInfo($data["info"])
-            ->setType($infoType)
+        $info->setType($infoType)
             ->setStatus("on")
         ;
         $entityManager->persist($info);
