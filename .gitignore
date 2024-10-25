@@ -11,3 +11,5 @@
 .idea/
 ###< symfony/framework-bundle ###
 .idea
+/bin/console
+composer.lock

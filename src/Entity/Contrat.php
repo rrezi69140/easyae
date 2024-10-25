@@ -6,6 +6,7 @@ use App\Repository\ContratRepository;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ContratRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -17,8 +18,9 @@ class Contrat
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['facturation'])]
     private ?int $id = null;
-
+    
     #[ORM\Column(length: 255)]
     private ?string $name = null;
     // #[ORM\Column]
