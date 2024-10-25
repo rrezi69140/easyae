@@ -24,6 +24,7 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        $now = new \DateTime();
         $facturationModelRefs = [];
         for ($i = FacturationModelFixtures::POOL_MIN; $i < FacturationModelFixtures::POOL_MAX; $i++) {
             $facturationModelRefs[] = FacturationModelFixtures::PREFIX . $i;
@@ -40,19 +41,19 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $client = new Client();
             $client->setName($this->faker->company);
-            $createdAt = $this->faker->dateTimeBetween('-2 years', 'now');
-            $client->setCreatedAt($createdAt);
-            $client->setUpdatedAt($this->faker->dateTimeBetween($createdAt, 'now'));
-            $client->setStatus($this->faker->randomElement(['on', 'off']));
+            $dateCreated = $this->faker->dateTimeBetween('-2 years', 'now');
+            $client->setCreatedAt($dateCreated);
+            $client->setUpdatedAt($this->faker->dateTimeBetween($dateCreated, 'now'));
 
-            // Assigner un modèle de facturation et un contact uniquement si disponibles
-            if ($i < $facturationModelCount) {
-                $facturationModel = $this->getReference($facturationModelRefs[$i]);
+            $client->setStatus('on');
+
+            if ($facturationModelCount > 0) {
+                $facturationModel = $this->getReference($facturationModelRefs[$i % $facturationModelCount]);
                 $client->setFacturationModel($facturationModel);
             }
 
-            if ($i < $contactCount) {
-                $contact = $this->getReference($contactRefs[$i]);
+            if ($contactCount > 0) {
+                $contact = $this->getReference($contactRefs[$i % $contactCount]);
                 $client->setContact($contact);
             }
 
