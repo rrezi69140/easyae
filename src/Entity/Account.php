@@ -6,6 +6,7 @@ use App\Repository\AccountRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -16,16 +17,20 @@ class Account
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['account'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['account'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 24)]
+    #[Groups(['account'])]
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'accounts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['account'])]
     private ?Client $client = null;
 
     public function getId(): ?int
