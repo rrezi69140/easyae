@@ -17,9 +17,11 @@ class FacturationModel
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['facturationModel'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['facturationModel'])]
     private ?string $name = null;
 
     public function getId(): ?int
