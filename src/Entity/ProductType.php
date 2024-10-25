@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProductTypeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -18,6 +19,7 @@ class ProductType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['product'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
