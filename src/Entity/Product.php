@@ -82,6 +82,8 @@ class Product
     public function setType(?ProductType $type): static
     {
         $this->type = $type;
+
+        return $this;
     }
     public function getQuantityType(): ?QuantityType
     {
