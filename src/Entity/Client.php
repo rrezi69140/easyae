@@ -27,7 +27,7 @@ class Client
     private ?int $id = null;
 
     #[ORM\Column(length: 64)]
-    #[Groups(['account'])]
+    #[Groups(['account', 'contrat'])]
 
     private ?string $name = null;
 
