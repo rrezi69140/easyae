@@ -27,6 +27,19 @@ class ContactLink
     #[ORM\ManyToOne(inversedBy: 'link')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Contact $contact = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['contactLink'])]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $updatedAt = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $status = null;
+
+    #[ORM\ManyToOne(inversedBy: 'contactLinks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ContactLinkType $contactLinkType = null;
 
     public function getId(): ?int
     {
@@ -53,6 +66,18 @@ class ContactLink
     public function setContact(?Contact $contact): static
     {
         $this->contact = $contact;
+
+        return $this;
+    }
+
+    public function getContactLinkType(): ?ContactLinkType
+    {
+        return $this->contactLinkType;
+    }
+
+    public function setContactLinkType(?ContactLinkType $contactLinkType): static
+    {
+        $this->contactLinkType = $contactLinkType;
 
         return $this;
     }

@@ -30,4 +30,19 @@ class FacturationModelController extends AbstractController
 
         return new JsonResponse($facturationModelJson, JsonResponse::HTTP_OK, [], true);
     }
+
+    #[Route(name: 'api_facturation_model_new', methods: ["POST"])]
+    public function create(Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = $request->toArray();
+        $client = $clientRepository->find($data["client"]);
+        $facturationModel = $serializer->deserialize($request->getContent(), FacturationModel::class, 'json', []);
+        $facturationModel->setClient($client)
+            ->setStatus("on")
+        ;
+        $entityManager->persist($facturationModel);
+        $entityManager->flush();
+        $facturationModelJson = $serializer->serialize($facturationModel, 'json', ['groups' => "facturationModel"]);
+        return new JsonResponse($facturationModelJson, JsonResponse::HTTP_OK, [], true);
+    }
 }
