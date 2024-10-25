@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\StatisticsPropertiesTrait;
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -42,6 +44,16 @@ class Product
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['product'])]
     private ?QuantityType $quantityType = null;
+    /**
+     * @var Collection<int, Contrat>
+     */
+    #[ORM\ManyToMany(targetEntity: Contrat::class, mappedBy: 'products')]
+    private Collection $contrats;
+
+    public function __construct()
+    {
+        $this->contrats = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,6 +115,31 @@ class Product
     public function setQuantityType(?QuantityType $quantityType): static
     {
         $this->quantityType = $quantityType;
+        return $this;
+    }
+    /**
+     * @return Collection<int, Contrat>
+     */
+    public function getContrats(): Collection
+    {
+        return $this->contrats;
+    }
+
+    public function addContrat(Contrat $contrat): static
+    {
+        if (!$this->contrats->contains($contrat)) {
+            $this->contrats->add($contrat);
+            $contrat->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContrat(Contrat $contrat): static
+    {
+        if ($this->contrats->removeElement($contrat)) {
+            $contrat->removeProduct($this);
+        }
 
         return $this;
     }
