@@ -32,10 +32,12 @@ class Contrat
     #[Groups(['contrat'])]
     private ?bool $isDone = null;
 
+    #[Groups(['contrat'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['contrat'])]
     private ?\DateTimeInterface $startAt = null;
 
+    #[Groups(['contrat'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['contrat'])]
     private ?\DateTimeInterface $endAt = null;
