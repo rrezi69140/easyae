@@ -41,7 +41,7 @@ class Contrat
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $endAt = null;
 
-    #[ORM\OneToOne(mappedBy: 'Contrat')]
+    #[ORM\OneToOne(mappedBy: 'contrat')]
     private ?Facturation $facturation = null;
 
     public function getId(): ?int
