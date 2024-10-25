@@ -33,8 +33,9 @@ class Contrat
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $endAt = null;
 
-    #[ORM\OneToOne(mappedBy: 'Contrat')]
+    #[ORM\OneToOne(mappedBy: 'Contrat', targetEntity: Facturation::class)]
     private ?Facturation $facturation = null;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?ContratType $type = null;
