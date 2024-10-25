@@ -4,12 +4,12 @@ namespace App\Controller;
 
 use App\Entity\ContactLink;
 use App\Repository\ContactLinkRepository;
-use App\Repository\ContactLinkTypeRepository;
+
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/api/contact-link')]
@@ -28,6 +28,10 @@ class ContactLinkController extends AbstractController
     #[Route(path: '/{id}', name: 'api_contact_link_show', methods: ["GET"])]
     public function get(ContactLink $contactLink, SerializerInterface $serializer): JsonResponse
     {
+        // $contactLinkList = $contactLinkRepository->find($id);
+
+
+
         $contactLinkJson = $serializer->serialize($contactLink, 'json', ['groups' => "contactLink"]);
 
         return new JsonResponse($contactLinkJson, JsonResponse::HTTP_OK, [], true);

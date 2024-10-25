@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\StatisticsPropertiesTrait;
 use App\Repository\ContactLinkRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class ContactLink
 {
+    use StatisticsPropertiesTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -22,6 +24,9 @@ class ContactLink
     #[Groups(['contactLink'])]
     private ?string $value = null;
 
+    #[ORM\ManyToOne(inversedBy: 'link')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Contact $contact = null;
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['contactLink'])]
     private ?\DateTimeInterface $createdAt = null;
@@ -53,38 +58,14 @@ class ContactLink
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getContact(): ?Contact
     {
-        return $this->createdAt;
+        return $this->contact;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    public function setContact(?Contact $contact): static
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
+        $this->contact = $contact;
 
         return $this;
     }
