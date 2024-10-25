@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProductTypeRepository;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProductTypeRepository::class)]
@@ -21,7 +22,7 @@ class ProductType
     #[Groups(['product', 'productType'])]
 
     private ?int $id = null;
-    
+
 
     #[ORM\Column(length: 255)]
     #[Groups(['productType'])]
