@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Repository\FacturationModelRepository;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+use App\Repository\FacturationModelRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

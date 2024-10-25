@@ -21,6 +21,7 @@ class Contrat
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['contrat'])]
+    #[Groups(['facturation'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
