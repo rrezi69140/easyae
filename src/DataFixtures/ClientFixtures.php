@@ -42,8 +42,10 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
             $client = new Client();
             $client->setName($this->faker->company);
             $dateCreated = $this->faker->dateTimeBetween('-2 years', 'now');
+            $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
+
             $client->setCreatedAt($dateCreated);
-            $client->setUpdatedAt($this->faker->dateTimeBetween($dateCreated, 'now'));
+            $client->setUpdatedAt($dateUpdated);
 
             $client->setStatus('on');
 
