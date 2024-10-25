@@ -18,11 +18,11 @@ class ContratType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['contratType'])]
+    #[Groups(['contratType', 'contrat'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['contratType'])]
+    #[Groups(['contratType', 'contrat'])]
     private ?string $name = null;
 
     public function getId(): ?int
