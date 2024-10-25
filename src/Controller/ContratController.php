@@ -46,11 +46,14 @@ class ContratController extends AbstractController
         $contrat = $serializer->deserialize($request->getContent(), Contrat::class, 'json', []);
         $client = $clientRepository->find($data["client"]);
         $type = $typeRepository->find($data["contratType"]);
+        $start = new DateTime($data["startAt"]);
+        $end = new DateTime($data["endAt"]);
+        $done = $data["is_done"];
         $contrat->setClient($client)
             ->setType($type)
-            ->setDone(0)
-            ->setStartAt(new DateTime("2022-11-24T13:34:33+00:00"))
-            ->setEndAt(new DateTime("2026-04-19T09:13:23+00:00"))
+            ->setDone($done)
+            ->setStartAt($start)
+            ->setEndAt($end)
         ;
         $entityManager->persist($contrat);
         $entityManager->flush();
