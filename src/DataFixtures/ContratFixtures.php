@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 use Faker\Factory;
 use Faker\Generator;
 use App\Entity\Contrat;
-use App\Entity\Product;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
