@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\FacturationModelRepository;
-use Doctrine\DBAL\Types\Types;
+use App\Repository\ServiceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\StatisticsPropertiesTrait;
 
-#[ORM\Entity(repositoryClass: FacturationModelRepository::class)]
-class FacturationModel
+#[ORM\Entity(repositoryClass: ServiceRepository::class)]
+class Service
 {
     use StatisticsPropertiesTrait;
 
