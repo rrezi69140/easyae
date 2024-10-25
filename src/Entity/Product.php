@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -17,20 +18,29 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['product'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['product'])]
     private ?int $quantity = null;
 
     #[ORM\Column]
+    #[Groups(['product'])]
     private ?float $price = null;
 
     #[ORM\Column]
+    #[Groups(['product'])]
     private ?float $priceUnit = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['product'])]
     private ?ProductType $type = null;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['product'])]
     private ?QuantityType $quantityType = null;
 
     public function getId(): ?int
