@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/api/fonction')]
@@ -42,5 +44,37 @@ class FonctionController extends AbstractController
         $fonctionJson = $serializer->serialize($fonction, 'json', ['groups' => "fonction"]);
         return new JsonResponse($fonctionJson, JsonResponse::HTTP_CREATED, [], true);
     }
-    
+    #[Route(path: "/{id}", name: 'api_fonction_edit', methods: ["PATCH"])]
+    public function update(Fonction $fonction, UrlGeneratorInterface $urlGenerator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $updatedFonction = $serializer->deserialize($request->getContent(), Fonction::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $fonction]);
+        $updatedFonction
+            ->setClient($client ?? $updatedFonction->getClient())
+            ->setStatus("on")
+        ;
+
+        $entityManager->persist($updatedFonction);
+        $entityManager->flush();
+        $location = $urlGenerator->generate("api_fonction_show", ['id' => $updatedFonction->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
+    }
+    #[Route(path: "/{id}", name: 'api_fonction_delete', methods: ["DELETE"])]
+    public function delete(Fonction $fonction, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = $request->toArray();
+        if (isset($data['force']) && $data['force'] === true) {
+            $entityManager->remove($fonction);
+
+
+        } else {
+            $fonction
+                ->setStatus("off")
+            ;
+
+            $entityManager->persist($fonction);
+        }
+
+        $entityManager->flush();
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
 }
