@@ -13,7 +13,7 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
 {
     public const PREFIX = "client#";
     public const POOL_MIN = 0;
-    public const POOL_MAX = 10;
+    public const POOL_MAX = 40;
 
     private Generator $faker;
 
@@ -24,13 +24,14 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $now = new \DateTime();
         $facturationModelRefs = [];
+        
         for ($i = FacturationModelFixtures::POOL_MIN; $i < FacturationModelFixtures::POOL_MAX; $i++) {
             $facturationModelRefs[] = FacturationModelFixtures::PREFIX . $i;
         }
 
         $contactRefs = [];
+        
         for ($i = ContactFixtures::POOL_MIN; $i < ContactFixtures::POOL_MAX; $i++) {
             $contactRefs[] = ContactFixtures::PREFIX . $i;
         }
@@ -42,20 +43,20 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
             $client = new Client();
             $client->setName($this->faker->company);
             $dateCreated = $this->faker->dateTimeBetween('-2 years', 'now');
-            $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
-
             $client->setCreatedAt($dateCreated);
-            $client->setUpdatedAt($dateUpdated);
+            $client->setUpdatedAt(new \DateTime());
 
             $client->setStatus('on');
 
             if ($facturationModelCount > 0) {
-                $facturationModel = $this->getReference($facturationModelRefs[$i % $facturationModelCount]);
+                $facturationModelIndex = min($i, $facturationModelCount - 1);
+                $facturationModel = $this->getReference($facturationModelRefs[$facturationModelIndex]);
                 $client->setFacturationModel($facturationModel);
             }
 
             if ($contactCount > 0) {
-                $contact = $this->getReference($contactRefs[$i % $contactCount]);
+                $contactIndex = min($i, $contactCount - 1);
+                $contact = $this->getReference($contactRefs[$contactIndex]);
                 $client->setContact($contact);
             }
 

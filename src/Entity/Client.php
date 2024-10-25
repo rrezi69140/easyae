@@ -47,7 +47,7 @@ class Client
     #[Groups(['client'])]
     private ?Contact $contact = null;
 
-    #[ORM\OneToOne(inversedBy: 'client', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'client', cascade: ['persist', 'remove'])]
     #[Groups(['client'])]
     private ?FacturationModel $facturationModel = null;
 
