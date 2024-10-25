@@ -36,13 +36,13 @@ class ProductTypeController extends AbstractController
     {
         $data = $request->toArray();
         $productType = $productTypeRepository->find($data["client"]);
-        $account = $serializer->deserialize($request->getContent(), Account::class, 'json', []);
-        $account->setClient($productType)
+        $productType = $serializer->deserialize($request->getContent(), ProductType::class, 'json', []);
+        $productType->setClient($productType)
             ->setStatus("on")
         ;
         $entityManager->persist($productType);
         $entityManager->flush();
-        $accountJson = $serializer->serialize($account, 'json', ['groups' => "productType"]);
+        $productTypeJson = $serializer->serialize($productType, 'json', ['groups' => "productType"]);
         return new JsonResponse($productTypeJson, JsonResponse::HTTP_OK, [], true);
     }
 
