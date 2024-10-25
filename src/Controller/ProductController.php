@@ -4,8 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use App\Repository\ProductTypeRepository;
+use App\Repository\QuantityTypeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -14,12 +18,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
-    #[Route(name: 'app_product_index', methods: ['GET'])]
+    #[Route(name: 'api_product_index', methods: ['GET'])]
     public function getAll(ProductRepository $productRepository, SerializerInterface $serializer): JsonResponse
     {
         $productList = $productRepository->findAll();
 
-        $productJson = $serializer->serialize($productList, 'json', ['groups' => 'product']);
+        $productJson = $serializer->serialize($productList, 'json', ['groups' => "product"]);
 
         return new JsonResponse($productJson, Response::HTTP_OK, [], true);
     }
@@ -28,9 +32,28 @@ class ProductController extends AbstractController
     public function get(Product $product, SerializerInterface $serializer): JsonResponse
     {
 
-        $accountJson = $serializer->serialize($product, 'json', ['groups' => "product"]);
+        $productJson = $serializer->serialize($product, 'json', ['groups' => "product"]);
 
 
-        return new JsonResponse($accountJson, Response::HTTP_OK, [], true);
+        return new JsonResponse($productJson, Response::HTTP_OK, [], true);
+    }
+
+    #[Route(name: 'api_product_new', methods: ['POST'])]
+    public function create(Request $request, ProductTypeRepository $productTypeRepository, QuantityTypeRepository $quantityTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = $request->toArray();
+        $type = $productTypeRepository->find($data['type']);
+        $quantityType = $quantityTypeRepository->find($data['quantityType']);
+
+        $product = $serializer->deserialize($request->getContent(), Product::class, 'json', []);
+        $product
+            ->setType($type)->setStatus("on")
+            ->setQuantityType($quantityType)->setStatus("on");
+
+        $entityManager->persist($product);
+        $entityManager->flush();
+
+        $productJson = $serializer->serialize($product, 'json', ['groups' => "product"]);
+        return new JsonResponse($productJson, Response::HTTP_CREATED, [], true);
     }
 }
