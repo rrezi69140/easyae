@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\FacturationModelRepository;
-use App\Entity\Traits\StatisticsPropertiesTrait;
 
 #[ORM\Entity(repositoryClass: FacturationModelRepository::class)]
 #[ORM\HasLifecycleCallbacks]
