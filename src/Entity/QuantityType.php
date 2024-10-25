@@ -19,16 +19,18 @@ class QuantityType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['product'])]
+    #[Groups(['product', 'quantityType'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['quantityType'])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Product>
      */
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'quantityType')]
+    // #[Groups(['quantityType'])]
     private Collection $products;
 
     public function __construct()
