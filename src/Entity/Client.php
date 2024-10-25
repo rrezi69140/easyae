@@ -26,18 +26,6 @@ class Client
 
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['account'])]
-
-    private ?string $quantity = null;
-
-
-    #[ORM\Column(length: 255)]
-    private ?string $price = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $priceUnit = null;
-
     /**
      * @var Collection<int, Account>
      */
@@ -63,68 +51,14 @@ class Client
         return $this->id;
     }
 
-    public function getQuantity(): ?string
+    public function getName(): ?string
     {
-        return $this->quantity;
+        return $this->name;
     }
 
-    public function setQuantity(string $quantity): static
+    public function setName(string $name): static
     {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    public function getPrice(): ?string
-    {
-        return $this->price;
-    }
-
-    public function setPrice(string $price): static
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    public function getPriceUnit(): ?string
-    {
-        return $this->priceUnit;
-    }
-
-    public function setPriceUnit(string $priceUnit): static
-    {
-        $this->priceUnit = $priceUnit;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Account>
-     */
-    public function getAccounts(): Collection
-    {
-        return $this->accounts;
-    }
-
-    public function addAccount(Account $account): static
-    {
-        if (!$this->accounts->contains($account)) {
-            $this->accounts->add($account);
-            $account->setClient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAccount(Account $account): static
-    {
-        if ($this->accounts->removeElement($account)) {
-            // set the owning side to null (unless already changed)
-            if ($account->getClient() === $this) {
-                $account->setClient(null);
-            }
-        }
+        $this->name = $name;
 
         return $this;
     }
@@ -159,3 +93,5 @@ class Client
         return $this;
     }
 }
+
+
