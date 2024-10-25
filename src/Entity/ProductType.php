@@ -25,11 +25,11 @@ class ProductType
 
 
     #[ORM\Column(length: 255)]
-    #[Groups(['productType'])]
+    #[Groups(['product', 'productType'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(['productType'])]
+    #[Groups(['product', 'productType'])]
     private ?float $price = null;
 
     /**
