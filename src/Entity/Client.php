@@ -26,6 +26,12 @@ class Client
 
     private ?int $id = null;
 
+    #[ORM\Column(length: 64)]
+    #[Groups(['account'])]
+
+    private ?string $name = null;
+
+
     /**
      * @var Collection<int, Account>
      */
