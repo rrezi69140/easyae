@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use App\Repository\ContratRepository;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ContratRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -17,20 +20,16 @@ class Contrat
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['contrat', 'facturation'])]
+
     private ?int $id = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups(['contrat'])]
     private ?string $name = null;
-    // #[ORM\Column]
-    // private ?int $typeID = null;
-
-    // #[ORM\Column]
-    // private ?int $productsID = null;
-
-    // #[ORM\Column]
-    // private ?int $clientID = null;
 
     #[ORM\Column]
+    #[Groups(['contrat'])]
     private ?bool $isDone = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -39,8 +38,29 @@ class Contrat
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $endAt = null;
 
-    #[ORM\OneToOne(mappedBy: 'Contrat')]
+    #[ORM\OneToOne(mappedBy: 'contrat', targetEntity: Facturation::class)]
     private ?Facturation $facturation = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['contrat'])]
+    private ?ContratType $type = null;
+
+    #[ORM\ManyToOne(inversedBy: 'contrats')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['contrat'])]
+    private ?Client $client = null;
+
+    /**
+     * @var Collection<int, Product>
+     */
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'contrats')]
+    private Collection $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -58,42 +78,6 @@ class Contrat
 
         return $this;
     }
-
-    // public function getTypeID(): ?int
-    // {
-    //     return $this->typeID;
-    // }
-
-    // public function setTypeID(int $typeID): static
-    // {
-    //     $this->typeID = $typeID;
-
-    //     return $this;
-    // }
-
-    // public function getProductsID(): ?int
-    // {
-    //     return $this->productsID;
-    // }
-
-    // public function setProductsID(int $productsID): static
-    // {
-    //     $this->productsID = $productsID;
-
-    //     return $this;
-    // }
-
-    // public function getClientID(): ?int
-    // {
-    //     return $this->clientID;
-    // }
-
-    // public function setClientID(int $clientID): static
-    // {
-    //     $this->clientID = $clientID;
-
-    //     return $this;
-    // }
 
     public function isDone(): ?bool
     {
@@ -144,6 +128,52 @@ class Contrat
         }
 
         $this->facturation = $facturation;
+        return $this;
+    }
+    public function getType(): ?ContratType
+    {
+        return $this->type;
+    }
+
+    public function setType(?ContratType $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): static
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product): static
+    {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): static
+    {
+        $this->products->removeElement($product);
 
         return $this;
     }

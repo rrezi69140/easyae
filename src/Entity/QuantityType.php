@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: QuantityTypeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -18,15 +19,18 @@ class QuantityType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['product', 'quantityType'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['quantityType'])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Product>
      */
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'quantityType')]
+    // #[Groups(['quantityType'])]
     private Collection $products;
 
     public function __construct()

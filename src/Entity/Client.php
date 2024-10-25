@@ -22,9 +22,15 @@ class Client
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['account'])]
+    #[Groups(['account', 'contrat'])]
 
     private ?int $id = null;
+
+    #[ORM\Column(length: 64)]
+    #[Groups(['account'])]
+
+    private ?string $name = null;
+
 
     /**
      * @var Collection<int, Account>
@@ -34,9 +40,16 @@ class Client
 
     private Collection $accounts;
 
+    /**
+     * @var Collection<int, Contrat>
+     */
+    #[ORM\OneToMany(targetEntity: Contrat::class, mappedBy: 'client')]
+    private Collection $contrats;
+
     public function __construct()
     {
         $this->accounts = new ArrayCollection();
+        $this->contrats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -55,6 +68,34 @@ class Client
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Contrat>
+     */
+    public function getContrats(): Collection
+    {
+        return $this->contrats;
+    }
+
+    public function addContrat(Contrat $contrat): static
+    {
+        if (!$this->contrats->contains($contrat)) {
+            $this->contrats->add($contrat);
+            $contrat->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContrat(Contrat $contrat): static
+    {
+        if ($this->contrats->removeElement($contrat)) {
+            // set the owning side to null (unless already changed)
+            if ($contrat->getClient() === $this) {
+                $contrat->setClient(null);
+            }
+        }
+
+        return $this;
+    }
 }
-
-
