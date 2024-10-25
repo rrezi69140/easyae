@@ -35,7 +35,7 @@ class ProductTypeController extends AbstractController
     public function create(Request $request, ProductTypeRepository $productTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
-        $productType = $productTypeRepository->find($data["client"]);
+        $client = $clientRepository->find($data["client"]);
         $productType = $serializer->deserialize($request->getContent(), ProductType::class, 'json', []);
         $productType->setClient($productType)
             ->setStatus("on")
