@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Fonction;
 use App\Repository\FonctionRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -27,4 +29,18 @@ class FonctionController extends AbstractController
         $fonctionJson = $serializer->serialize($fonction, 'json', ['groups' => "fonction"]);
         return new JsonResponse($fonctionJson, JsonResponse::HTTP_OK, [], true);
     }
+    #[Route(name: 'api_fonction_new', methods: ["POST"])]
+    public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $fonction = $serializer->deserialize($request->getContent(), Fonction::class, 'json', []);
+        
+        $fonction->setStatus("on");
+        
+        $entityManager->persist($fonction);
+        $entityManager->flush();
+        
+        $fonctionJson = $serializer->serialize($fonction, 'json', ['groups' => "fonction"]);
+        return new JsonResponse($fonctionJson, JsonResponse::HTTP_CREATED, [], true);
+    }
+    
 }
