@@ -19,7 +19,7 @@ class QuantityType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['quantityType'])]
+    #[Groups(['product', 'quantityType'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
