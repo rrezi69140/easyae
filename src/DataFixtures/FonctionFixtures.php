@@ -2,11 +2,11 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Fonction;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+use App\Entity\Fonction;
 
 class FonctionFixtures extends Fixture
 {
@@ -15,7 +15,7 @@ class FonctionFixtures extends Fixture
     public const POOL_MAX = 10;
 
     private Generator $faker;
-    private function __construct()
+    public function __construct()
     {
         $this->faker = Factory::create('fr_FR');
     }
@@ -33,7 +33,7 @@ class FonctionFixtures extends Fixture
             $fonction->setStatus($this->faker->randomElement(['on', 'off']));
 
             $manager->persist($fonction);
-            $this->addReference(self::PREFIX, $i, $fonction);
+            $this->addReference(self::PREFIX . $i, $fonction);
         }
 
         $manager->flush();

@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Repository\FonctionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\StatisticsPropertiesTrait;
 
 #[ORM\Entity(repositoryClass: FonctionRepository::class)]
 class Fonction
 {
+    use StatisticsPropertiesTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -18,15 +21,6 @@ class Fonction
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
-
-    #[ORM\Column]
-    private ?\DateTime $createdAt = null;
-
-    #[ORM\Column]
-    private ?\DateTime $updatedAt = null;
-
-    #[ORM\Column(length: 24)]
-    private ?string $status = null;
 
     public function getId(): ?int
     {
@@ -57,39 +51,4 @@ class Fonction
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTime $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTime $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
-
-        return $this;
-    }
 }

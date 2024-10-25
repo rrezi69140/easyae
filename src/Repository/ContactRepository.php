@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\ContactLink;
+use App\Entity\Contact;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ContactLink>
+ * @extends ServiceEntityRepository<Contact>
  */
-class ContactLinkRepository extends ServiceEntityRepository
+class ContactRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ContactLink::class);
+        parent::__construct($registry, Contact::class);
     }
 
     //    /**
-    //     * @return ContactLink[] Returns an array of ContactLink objects
+    //     * @return Contact[] Returns an array of Contact objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class ContactLinkRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?ContactLink
+    //    public function findOneBySomeField($value): ?Contact
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')
@@ -40,5 +40,4 @@ class ContactLinkRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-
 }

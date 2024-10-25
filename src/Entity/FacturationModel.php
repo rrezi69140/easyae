@@ -2,15 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ContratTypeRepository;
+use App\Repository\FacturationModelRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Traits\StatisticsPropertiesTrait;
 
-#[ORM\Entity(repositoryClass: ContratTypeRepository::class)]
-class ContratType
+#[ORM\Entity(repositoryClass: FacturationModelRepository::class)]
+class FacturationModel
 {
-    use StatisticsPropertiesTrait;
+    use StaticEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
