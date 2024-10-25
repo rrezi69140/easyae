@@ -60,6 +60,4 @@ class ContactLinkTypeController extends AbstractController
         $entityManager->flush();
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
-
-
 }
