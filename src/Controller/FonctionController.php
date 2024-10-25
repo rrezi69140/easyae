@@ -49,7 +49,7 @@ class FonctionController extends AbstractController
     {
         $updatedFonction = $serializer->deserialize($request->getContent(), Fonction::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $fonction]);
         $updatedFonction
-            ->setClient($client ?? $updatedFonction->getClient())
+            ->setContact($contact ?? $updatedFonction->getContact())
             ->setStatus("on")
         ;
 
