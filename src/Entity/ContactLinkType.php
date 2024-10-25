@@ -16,11 +16,11 @@ class ContactLinkType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['contact_link_type'])]
+    #[Groups(['contactLinkType'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['contact_link_type'])]
+    #[Groups(['contactLinkType'])]
     private ?string $name = null;
 
     public function getId(): ?int

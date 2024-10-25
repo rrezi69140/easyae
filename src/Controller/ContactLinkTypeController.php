@@ -18,7 +18,7 @@ class ContactLinkTypeController extends AbstractController
     {
         $contactLinkTypeList = $contactLinkTypeRepository->findAll();
 
-        $contactLinkTypeJson = $serializer->serialize($contactLinkTypeList, 'json', ['groups' => "contact_link_type"]);
+        $contactLinkTypeJson = $serializer->serialize($contactLinkTypeList, 'json', ['groups' => "contactLinkType"]);
 
 
         return new JsonResponse($contactLinkTypeJson, JsonResponse::HTTP_OK, [], true);
@@ -26,7 +26,7 @@ class ContactLinkTypeController extends AbstractController
     #[Route(path: '/{id}', name: 'api_contact_link_type_show', methods: ["GET"])]
     public function get(ContactLinkType $contactLinkType, SerializerInterface $serializer): JsonResponse
     {
-        $contactLinkTypeJson = $serializer->serialize($contactLinkType, 'json', ['groups' => "contact_link_type"]);
+        $contactLinkTypeJson = $serializer->serialize($contactLinkType, 'json', ['groups' => "contactLinkType"]);
 
 
         return new JsonResponse($contactLinkTypeJson, JsonResponse::HTTP_OK, [], true);
