@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,5 +22,15 @@ class ProductController extends AbstractController
         $productJson = $serializer->serialize($productList, 'json', ['groups' => 'product']);
 
         return new JsonResponse($productJson, Response::HTTP_OK, [], true);
+    }
+
+    #[Route(path: '/{id}', name: 'api_product_show', methods: ["GET"])]
+    public function get(Product $product, SerializerInterface $serializer): JsonResponse
+    {
+
+        $accountJson = $serializer->serialize($product, 'json', ['groups' => "product"]);
+
+
+        return new JsonResponse($accountJson, Response::HTTP_OK, [], true);
     }
 }
