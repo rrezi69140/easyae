@@ -8,6 +8,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InfoRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class Info
 {
 
@@ -23,6 +25,10 @@ class Info
 
     #[ORM\Column(length: 255)]
     private ?string $info = null;
+
+    #[ORM\ManyToOne(inversedBy: 'infos')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?InfoType $type = null;
 
     public function getId(): ?int
     {
@@ -49,6 +55,18 @@ class Info
     public function setInfo(string $info): static
     {
         $this->info = $info;
+
+        return $this;
+    }
+
+    public function getType(): ?InfoType
+    {
+        return $this->type;
+    }
+
+    public function setType(?InfoType $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -7,6 +7,8 @@ use App\Repository\ContactLinkTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ContactLinkTypeRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class ContactLinkType
 {
     use StatisticsPropertiesTrait;

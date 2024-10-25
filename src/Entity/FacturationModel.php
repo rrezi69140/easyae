@@ -2,14 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\FacturationModelRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\FacturationModelRepository;
+use App\Entity\Traits\StatisticsPropertiesTrait;
 
 #[ORM\Entity(repositoryClass: FacturationModelRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class FacturationModel
 {
-    use StaticEntityTrait;
+    use StatisticsPropertiesTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

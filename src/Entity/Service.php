@@ -2,17 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\ContactRepository;
+use App\Repository\ServiceRepository;
+use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 
-use Doctrine\ORM\Mapping as ORM;
-
-#[ORM\Entity(repositoryClass: ContactRepository::class)]
+#[ORM\Entity(repositoryClass: ServiceRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 
-class Contact
+class Service
 {
-
     use StatisticsPropertiesTrait;
 
     #[ORM\Id]
@@ -20,9 +18,8 @@ class Contact
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 15)]
+    #[ORM\Column(length: 255)]
     private ?string $name = null;
-
 
     public function getId(): ?int
     {
@@ -40,6 +37,4 @@ class Contact
 
         return $this;
     }
-
-
 }

@@ -2,11 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ClientRepository;
+use Doctrine\Common\Collections\Collection;
+
 use App\Entity\Traits\StatisticsPropertiesTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class Client
 {
 
@@ -15,10 +22,34 @@ class Client
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['account'])]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[Groups(['account'])]
+
+    private ?string $quantity = null;
+
+
+    #[ORM\Column(length: 255)]
+    private ?string $price = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $priceUnit = null;
+
+    /**
+     * @var Collection<int, Account>
+     */
+    #[ORM\OneToMany(targetEntity: Account::class, mappedBy: 'client')]
+    #[Groups(['client'])]
+
+    private Collection $accounts;
+
+    public function __construct()
+    {
+        $this->accounts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {

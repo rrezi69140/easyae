@@ -7,6 +7,8 @@ use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class Product
 {
 
@@ -25,6 +27,11 @@ class Product
 
     #[ORM\Column]
     private ?float $priceUnit = null;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ProductType $type = null;
+    private ?QuantityType $quantityType = null;
 
     public function getId(): ?int
     {
@@ -63,6 +70,27 @@ class Product
     public function setPriceUnit(float $priceUnit): static
     {
         $this->priceUnit = $priceUnit;
+
+        return $this;
+    }
+
+    public function getType(): ?ProductType
+    {
+        return $this->type;
+    }
+
+    public function setType(?ProductType $type): static
+    {
+        $this->type = $type;
+    }
+    public function getQuantityType(): ?QuantityType
+    {
+        return $this->quantityType;
+    }
+
+    public function setQuantityType(?QuantityType $quantityType): static
+    {
+        $this->quantityType = $quantityType;
 
         return $this;
     }
