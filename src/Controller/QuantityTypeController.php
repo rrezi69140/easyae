@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class QuantityTypeController extends AbstractController
 {
-    #[Route(name: 'api_quantityType_index', methods: ["GET"])]
+    #[Route(name: 'api_quantity_type_index', methods: ["GET"])]
     public function getAll(QuantityTypeRepository $quantityTypeRepository, SerializerInterface $serializer): JsonResponse
     {
         $quantityTypeList = $quantityTypeRepository->findAll();
@@ -22,7 +22,7 @@ class QuantityTypeController extends AbstractController
 
         return new JsonResponse($quantityTypeJson, JsonResponse::HTTP_OK, [], true);
     }
-    #[Route(path: '/{id}', name: 'api_quantityType_show', methods: ["GET"])]
+    #[Route(path: '/{id}', name: 'api_quantity_type_show', methods: ["GET"])]
     public function get(QuantityType $quantityType, SerializerInterface $serializer): JsonResponse
     {
         $quantityTypeJson = $serializer->serialize($quantityType, 'json', ['groups' => "quantityType"]);
