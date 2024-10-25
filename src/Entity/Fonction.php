@@ -29,7 +29,7 @@ class Fonction
     private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'fonctions')]
-    private ?Contact $contact = null;
+    private ?Contact $contacts = null;
 
     public function getId(): ?int
     {
@@ -62,12 +62,12 @@ class Fonction
 
     public function getFonctions(): ?Contact
     {
-        return $this->contact;
+        return $this->contacts;
     }
 
-    public function setFonctions(?Contact $contact): static
+    public function setFonctions(?Contact $contacts): static
     {
-        $this->contact = $contact;
+        $this->contacts = $contacts;
 
         return $this;
     }

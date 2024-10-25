@@ -2,13 +2,14 @@
 
 namespace App\DataFixtures;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Faker\Factory;
 use Faker\Generator;
 use App\Entity\Contact;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 
-class ContactFixtures extends Fixture
+class ContactFixtures extends Fixture implements DependentFixtureInterface
 {
 
     public const PREFIX = "contact#";
@@ -25,7 +26,13 @@ class ContactFixtures extends Fixture
     {
 
         $now = new \DateTime();
-        
+
+        $prefixContactLink = ContactLinkFixtures::PREFIX;
+        $contactLinkRefs = [];
+        for ($i = ContactLinkFixtures::POOL_MIN; $i < ContactLinkFixtures::POOL_MAX; $i++) {
+            $contactLinkRefs[] = $prefixContactLink . $i;
+        }
+
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
@@ -41,5 +48,13 @@ class ContactFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            ContactLinkFixtures::class,
+            FonctionFixtures::class
+        ];
     }
 }
