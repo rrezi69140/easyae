@@ -73,7 +73,6 @@ class InfoController extends AbstractController
 
         $entityManager->persist($updatedInfo);
         $entityManager->flush();
-        $infoJson = $serializer->serialize($updatedInfo, 'json', ['groups' => "info"]);
         $location = $urlGenerator->generate("api_info_show", ['id' => $updatedInfo->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
