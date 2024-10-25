@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 
 #[ORM\Entity(repositoryClass: QuantityTypeRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class QuantityType
 {
     use StatisticsPropertiesTrait;

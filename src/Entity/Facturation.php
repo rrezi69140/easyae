@@ -8,6 +8,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FacturationRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
 class Facturation
 {
 
@@ -26,7 +28,7 @@ class Facturation
 
     #[ORM\OneToOne(inversedBy: 'facturation')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Contrat $contrat = null;  
+    private ?Contrat $contrat = null;
 
     public function getId(): ?int
     {
