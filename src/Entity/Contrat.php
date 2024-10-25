@@ -20,9 +20,10 @@ class Contrat
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['contrat'])]
-    private ?int $id = null;
+    #[Groups(['contrat', 'facturation'])]
 
+    private ?int $id = null;
+    
     #[ORM\Column(length: 255)]
     #[Groups(['contrat'])]
     private ?string $name = null;
