@@ -33,6 +33,12 @@ class ContactFixtures extends Fixture implements DependentFixtureInterface
             $contactLinkRefs[] = $prefixContactLink . $i;
         }
 
+        $prefixFonction = FonctionFixtures::PREFIX;
+        $fonctionRefs = [];
+        for ($i = FonctionFixtures::POOL_MIN; $i < FonctionFixtures::POOL_MAX; $i++) {
+            $fonctionRefs[] = $prefixFonction . $i;
+        }
+
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);

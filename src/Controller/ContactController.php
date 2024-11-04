@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Account;
-use App\Repository\AccountRepository;
+use App\Entity\Contact;
+use App\Repository\ContactRepository;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,83 +14,92 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/api/account')]
+#[Route('/api/contact')]
 
-class AccountController extends AbstractController
+class ContactController extends AbstractController
 {
-    #[Route(name: 'api_account_index', methods: ["GET"])]
-    public function getAll(AccountRepository $accountRepository, SerializerInterface $serializer): JsonResponse
+    #[Route(name: 'api_contact_index', methods: ["GET"])]
+    public function getAll(ContactRepository $contactRepository, SerializerInterface $serializer): JsonResponse
     {
-        $accountList = $accountRepository->findAll();
+        $contactList = $contactRepository->findAll();
 
-        $accountJson = $serializer->serialize($accountList, 'json', ['groups' => "account"]);
+        $contactJson = $serializer->serialize($contactList, 'json', ['groups' => "contact"]);
 
 
-        return new JsonResponse($accountJson, JsonResponse::HTTP_OK, [], true);
+        return new JsonResponse($contactJson, JsonResponse::HTTP_OK, [], true);
     }
-    #[Route(path: '/{id}', name: 'api_account_show', methods: ["GET"])]
-    public function get(Account $account, SerializerInterface $serializer): JsonResponse
+    
+    
+    #[Route(path: '/{id}', name: 'api_contact_show', methods: ["GET"])]
+    public function get(Contact $contact, SerializerInterface $serializer): JsonResponse
     {
-        $accountJson = $serializer->serialize($account, 'json', ['groups' => "account"]);
-        return new JsonResponse($accountJson, JsonResponse::HTTP_OK, [], true);
+        $contactJson = $serializer->serialize($contact, 'json', ['groups' => "contact"]);
+        
+        return new JsonResponse($contactJson, JsonResponse::HTTP_OK, [], true);
     }
 
-    #[Route(name: 'api_account_new', methods: ["POST"])]
-    public function create(Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    #[Route(name: 'api_contact_new', methods: ["POST"])]
+    public function create(Request $request, ContactRepository $contactRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
-        $client = $clientRepository->find($data["client"]);
-        $account = $serializer->deserialize($request->getContent(), Account::class, 'json', []);
-        $account->setClient($client)
-            ->setStatus("on")
-        ;
-        $entityManager->persist($account);
+
+        $contact = $contactRepository->find($data["contact"]);
+
+        $contact = $serializer->deserialize($request->getContent(), Contact::class, 'json', []);
+        $contact->setClient($client)
+            ->setStatus("on");
+
+        $entityManager->persist($contact);
         $entityManager->flush();
-        $accountJson = $serializer->serialize($account, 'json', ['groups' => "account"]);
-        return new JsonResponse($accountJson, JsonResponse::HTTP_CREATED, [], true);
+
+        $contactJson = $serializer->serialize($contact, 'json', ['groups' => "contact"]);
+
+        return new JsonResponse($contactJson, JsonResponse::HTTP_CREATED, [], true);
     }
 
-    #[Route(path: "/{id}", name: 'api_account_edit', methods: ["PATCH"])]
-    public function update(Account $account, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+
+    #[Route(path: "/{id}", name: 'api_contact_edit', methods: ["PATCH"])]
+    public function update(Contact $contact, UrlGeneratorInterface $urlGenerator, Request $request,ContactRepository $contactRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
-        if (isset($data['client'])) {
 
-            $client = $clientRepository->find($data["client"]);
+        if (isset($data['contact'])) {
+
+            $contact = $contactRepository->find($data["contact"]);
         }
 
+        $updatedcontact = $serializer->deserialize($request->getContent(), Contact::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $contact]);
+        $updatedcontact
+            ->setClient($client ?? $updatedcontact->getClient())
+            ->setStatus("on");
 
-        $updatedAccount = $serializer->deserialize($request->getContent(), Account::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $account]);
-        $updatedAccount
-            ->setClient($client ?? $updatedAccount->getClient())
-            ->setStatus("on")
-        ;
-
-        $entityManager->persist($updatedAccount);
+        $entityManager->persist($updatedcontact);
         $entityManager->flush();
-        $accountJson = $serializer->serialize($updatedAccount, 'json', ['groups' => "account"]);
-        $location = $urlGenerator->generate("api_account_show", ['id' => $updatedAccount->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $contactJson = $serializer->serialize($updatedcontact, 'json', ['groups' => "contact"]);
+
+        $location = $urlGenerator->generate("api_contact_show", ['id' => $updatedcontact->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
-    #[Route(path: "/{id}", name: 'api_account_delete', methods: ["DELETE"])]
-    public function delete(Account $account, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+
+
+    #[Route(path: "/{id}", name: 'api_contact_delete', methods: ["DELETE"])]
+    public function delete(Contact $contact, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
+        
         if (isset($data['force']) && $data['force'] === true) {
-            $entityManager->remove($account);
-
+            $entityManager->remove($contact);
 
         } else {
-            $account
-                ->setStatus("off")
-            ;
-
-            $entityManager->persist($account);
+            $contact
+                ->setStatus("off");
+            $entityManager->persist($contact);
         }
 
-
-
         $entityManager->flush();
+        
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }
