@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/product')]
@@ -55,5 +57,57 @@ class ProductController extends AbstractController
 
         $productJson = $serializer->serialize($product, 'json', ['groups' => "product"]);
         return new JsonResponse($productJson, Response::HTTP_CREATED, [], true);
+    }
+    
+    #[Route(path: '/{id}', name: 'api_product_edit', methods: ['PATCH'])]
+    public function update(Product $product, UrlGeneratorInterface $urlGenerator, Request $request, ProductTypeRepository $productTypeRepository, QuantityTypeRepository $quantityTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = $request->toArray();
+        
+        if (isset($data['type'])) {
+            
+            $type = $productTypeRepository->find($data['type']);
+        }
+        if (isset($data['quantityType'])) {
+            $quantityType = $quantityTypeRepository->find($data['quantityType']);
+        }
+
+
+        $updatedProduct = $serializer->deserialize($request->getContent(), Product::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $product]);
+        $updatedProduct
+            ->setType($type ?? $updatedProduct->getType())
+            ->setQuantityType($quantityType ?? $updatedProduct->getQuantityType())
+            ->setStatus("on")
+        ;
+
+        $entityManager->persist($updatedProduct);
+        $entityManager->flush();
+
+        $location = $urlGenerator->generate("api_product_show", ['id' => $updatedProduct->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT, ["Location" => $location]);
+    }
+
+    #[Route(path: "/{id}", name: 'api_product_delete', methods: ["DELETE"])]
+    public function delete(Product $product, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = $request->toArray();
+        if (isset($data['force']) && $data['force'] === true) {
+            $entityManager->remove($product);
+
+
+        } else {
+            $product
+                ->setStatus("off")
+            ;
+
+            $entityManager->persist($product);
+        }
+
+
+
+        $entityManager->flush();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }
