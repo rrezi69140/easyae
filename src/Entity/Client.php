@@ -5,32 +5,30 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\Collection;
-
 use App\Entity\Traits\StatisticsPropertiesTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
-
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 
 class Client
 {
-
     use StatisticsPropertiesTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['account', 'contrat'])]
+    #[Groups(['account', 'contrat', 'client'])]
 
     private ?int $id = null;
 
     #[ORM\Column(length: 64)]
-    #[Groups(['account'])]
+
+    #[Groups(['account', 'client', 'contrat'])]
+
 
     private ?string $name = null;
-
 
     /**
      * @var Collection<int, Account>
@@ -44,7 +42,16 @@ class Client
      * @var Collection<int, Contrat>
      */
     #[ORM\OneToMany(targetEntity: Contrat::class, mappedBy: 'client')]
+    #[Groups(['client'])]
     private Collection $contrats;
+
+    #[ORM\ManyToOne(inversedBy: 'clients')]
+    #[Groups(['client'])]
+    private ?Contact $contact = null;
+
+    #[ORM\ManyToOne(inversedBy: 'client', cascade: ['persist', 'remove'])]
+    #[Groups(['client'])]
+    private ?FacturationModel $facturationModel = null;
 
     public function __construct()
     {
@@ -95,6 +102,30 @@ class Client
                 $contrat->setClient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getContact(): ?Contact
+    {
+        return $this->contact;
+    }
+
+    public function setContact(?Contact $contact): static
+    {
+        $this->contact = $contact;
+
+        return $this;
+    }
+
+    public function getFacturationModel(): ?FacturationModel
+    {
+        return $this->facturationModel;
+    }
+
+    public function setFacturationModel(?FacturationModel $facturationModel): static
+    {
+        $this->facturationModel = $facturationModel;
 
         return $this;
     }
