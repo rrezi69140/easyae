@@ -27,12 +27,6 @@ class ContactLink
     #[ORM\ManyToOne(inversedBy: 'link')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Contact $contact = null;
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['contactLink'])]
-    private ?\DateTimeInterface $createdAt = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
