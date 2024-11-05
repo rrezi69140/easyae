@@ -45,4 +45,46 @@ class InfoTypeController extends AbstractController
         return new JsonResponse($infoTypeJson, JsonResponse::HTTP_CREATED, [], true);
     }
 
+    public function update(InfoType $infoType, UrlGeneratorInterface $urlGenerator, Request $request, InfoTypeRepository $infoTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = $request->toArray();
+        if (isset($data['infType'])) {
+
+            $infoType = $infoTypeRepository->find($data["infType"]);
+        }
+
+
+        $updatedInfoType = $serializer->deserialize($request->getContent(), InfoType::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $infoType]);
+        $updatedInfoType
+            ->setStatus("on")
+        ;
+
+        $entityManager->persist($updatedInfoType);
+        $entityManager->flush();
+        $infoTypeJson = $serializer->serialize($updatedInfoType, 'json', ['groups' => "infoType"]);
+        $location = $urlGenerator->generate("api_account_show", ['id' => $updatedInfoType->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
+    }
+    #[Route(path: "/{id}", name: 'api_infoType_delete', methods: ["DELETE"])]
+    public function delete(InfoType $infoType, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = $request->toArray();
+        if (isset($data['force']) && $data['force'] === true) {
+            $entityManager->remove($infoType);
+
+
+        } else {
+            $infoType
+                ->setStatus("off")
+            ;
+
+            $entityManager->persist($infoType);
+        }
+
+
+
+        $entityManager->flush();
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+
 }
