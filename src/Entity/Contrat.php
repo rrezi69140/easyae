@@ -54,14 +54,14 @@ class Contrat
     private ?Client $client = null;
 
     /**
-     * @var Collection<int, Product>
+     * @var Collection<int, Contrat>
      */
-    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'contrats')]
-    private Collection $products;
+    #[ORM\ManyToMany(targetEntity: Contrat::class, inversedBy: 'contrats')]
+    private Collection $contrats;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->contrats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -157,25 +157,25 @@ class Contrat
     }
 
     /**
-     * @return Collection<int, Product>
+     * @return Collection<int, Contrat>
      */
-    public function getProducts(): Collection
+    public function getContrats(): Collection
     {
-        return $this->products;
+        return $this->contrats;
     }
 
-    public function addProduct(Product $product): static
+    public function addContrat(Contrat $Contrat): static
     {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
+        if (!$this->contrats->contains($Contrat)) {
+            $this->contrats->add($Contrat);
         }
 
         return $this;
     }
 
-    public function removeProduct(Product $product): static
+    public function removeContrat(Contrat $contrat): static
     {
-        $this->products->removeElement($product);
+        $this->contrats->removeElement($contrat);
 
         return $this;
     }
