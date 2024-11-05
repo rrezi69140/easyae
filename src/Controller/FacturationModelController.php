@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Controller;
-
-use App\Repository\AccountRepository;
+use App\Repository\FacturationModelRepository;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -70,7 +69,7 @@ class FacturationModelController extends AbstractController
             ->setClient($client ?? $updatedFacturationModel->getClient())
             ->setStatus("on")
         ;
-        
+
         $entityManager->persist($updatedFacturationModel);
         $entityManager->flush();
         $cache->invalidateTags(tag: ["facturationModel","client"]);
