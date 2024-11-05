@@ -18,18 +18,18 @@ class ContactLinkType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['contactLinkType'])]
+    #[Groups(['contactLinkType', 'contactLink'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['contactLinkType'])]
+    #[Groups(['contactLinkType', 'contactLink'])]
     private ?string $name = null;
 
     /**
      * @var Collection<int, ContactLink>
      */
     #[ORM\OneToMany(targetEntity: ContactLink::class, mappedBy: 'contactLinkType')]
-    #[Groups(['contactLink'])]
+    #[Groups(['contactLinkType'])]
     private Collection $contactLinks;
 
     public function __construct()
