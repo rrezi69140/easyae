@@ -32,10 +32,12 @@ class Contrat
     #[Groups(['contrat'])]
     private ?bool $isDone = null;
 
+    #[Groups(['contrat'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['contrat'])]
     private ?\DateTimeInterface $startAt = null;
 
+    #[Groups(['contrat'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['contrat'])]
     private ?\DateTimeInterface $endAt = null;
@@ -54,14 +56,14 @@ class Contrat
     private ?Client $client = null;
 
     /**
-     * @var Collection<int, Contrat>
+     * @var Collection<int, Product>
      */
-    #[ORM\ManyToMany(targetEntity: Contrat::class, inversedBy: 'contrats')]
-    private Collection $contrats;
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'contrats')]
+    private Collection $products;
 
     public function __construct()
     {
-        $this->contrats = new ArrayCollection();
+        $this->products = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -157,25 +159,25 @@ class Contrat
     }
 
     /**
-     * @return Collection<int, Contrat>
+     * @return Collection<int, Product>
      */
-    public function getContrats(): Collection
+    public function getProducts(): Collection
     {
-        return $this->contrats;
+        return $this->products;
     }
 
-    public function addContrat(Contrat $Contrat): static
+    public function addProduct(Product $product): static
     {
-        if (!$this->contrats->contains($Contrat)) {
-            $this->contrats->add($Contrat);
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
         }
 
         return $this;
     }
 
-    public function removeContrat(Contrat $contrat): static
+    public function removeProduct(Product $product): static
     {
-        $this->contrats->removeElement($contrat);
+        $this->products->removeElement($product);
 
         return $this;
     }
