@@ -26,13 +26,17 @@ class ContactLinkFixtures extends Fixture implements DependentFixtureInterface
         $now = new \DateTime();
 
         $prefixContact = ContactFixtures::PREFIX;
+        $prefixContactLinkType = ContactLinkTypeFixtures::PREFIX;
         $contactRefs = [];
+        $contactLinkTypeRefs[] = [];
+
         for ($i = ContactFixtures::POOL_MIN; $i < ContactFixtures::POOL_MAX; $i++) {
             $contactRefs[] = $prefixContact . $i;
         }
 
         $prefixContactLinkType = ContactLinkTypeFixtures::PREFIX;
         $contactLinkTypeRefs = [];
+
         for ($i = ContactLinkTypeFixtures::POOL_MIN; $i < ContactLinkTypeFixtures::POOL_MAX; $i++) {
             $contactLinkTypeRefs[] = $prefixContactLinkType . $i;
         }
@@ -49,10 +53,11 @@ class ContactLinkFixtures extends Fixture implements DependentFixtureInterface
                 ->setContactLinkType($contactLinkType)
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
+                ->setContactLinkType($contactLinkType)
                 ->setStatus('on')
             ;
             $manager->persist($contactLink);
-            $this->addReference( self::PREFIX . $i, $contactLink);
+            $this->addReference(self::PREFIX . $i, $contactLink);
         }
         $manager->flush();
     }
@@ -61,7 +66,10 @@ class ContactLinkFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             ContactFixtures::class,
-            ContactLinkTypeFixtures::class,
+
+            ContactLinkTypeFixtures::class
+
+
         ];
     }
 }

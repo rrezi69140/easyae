@@ -33,11 +33,9 @@ class Contrat
     private ?bool $isDone = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['contrat'])]
     private ?\DateTimeInterface $startAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['contrat'])]
     private ?\DateTimeInterface $endAt = null;
 
     #[ORM\OneToOne(mappedBy: 'contrat', targetEntity: Facturation::class)]
