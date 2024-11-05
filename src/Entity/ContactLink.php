@@ -6,7 +6,6 @@ use App\Entity\Traits\StatisticsPropertiesTrait;
 use App\Repository\ContactLinkRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-
 #[ORM\Entity(repositoryClass: ContactLinkRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 
