@@ -45,10 +45,12 @@ class InfoTypeController extends AbstractController
         return new JsonResponse($infoTypeJson, JsonResponse::HTTP_CREATED, [], true);
     }
 
+    
+    #[Route(path: "/{id}", name: 'api_infoType_edit', methods: ["PATCH"])]
     public function update(InfoType $infoType, UrlGeneratorInterface $urlGenerator, Request $request, InfoTypeRepository $infoTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
-        if (isset($data['infType'])) {
+        if (isset($data['infoType'])) {
 
             $infoType = $infoTypeRepository->find($data["infType"]);
         }
