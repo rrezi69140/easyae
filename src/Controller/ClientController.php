@@ -10,6 +10,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 #[Route('/api/client')]
 class ClientController extends AbstractController
@@ -62,4 +64,33 @@ class ClientController extends AbstractController
         return new JsonResponse($clientJson, JsonResponse::HTTP_CREATED, [], true);
     }
 
+    #[Route(path: "/{id}", name: 'api_quantity_type_edit', methods: ["PATCH"])]
+    public function update(Client $client, UrlGeneratorInterface $urlGenerator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $updatedclient = $serializer->deserialize($request->getContent(), Client::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $client]);
+        $updatedclient->setStatus("on");
+
+        $entityManager->persist($updatedclient);
+        $entityManager->flush();
+        $location = $urlGenerator->generate("api_quantity_type_show", ['id' => $updatedclient->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
+    }
+
+    #[Route(path: "/{id}", name: 'api_quantity_type_delete', methods: ["DELETE"])]
+    public function delete(client $client, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = $request->toArray();
+        if (isset($data['force']) && $data['force'] === true) {
+            $entityManager->remove($client);
+
+
+        } else {
+            $client
+                ->setStatus("off")
+            ;
+            $entityManager->persist($client);
+        }
+        $entityManager->flush();
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
 }
