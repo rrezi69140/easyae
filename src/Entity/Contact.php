@@ -6,6 +6,8 @@ use App\Repository\ContactRepository;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -23,17 +25,23 @@ class Contact
     private ?int $id = null;
 
     #[ORM\Column(length: 15)]
+    #[Groups(['contact'])]
+
     private ?string $name = null;
 
     /**
      * @var Collection<int, ContactLink>
      */
     #[ORM\OneToMany(targetEntity: ContactLink::class, mappedBy: 'contact')]
+    #[Groups(['contact'])]
+
     private Collection $link;
     /*   
      * @var Collection<int, Fonction>
      */
     #[ORM\OneToMany(targetEntity: Fonction::class, mappedBy: 'Fonctions')]
+    #[Groups(['contact'])]
+
     private Collection $fonctions;
 
     public function __construct()
@@ -41,7 +49,6 @@ class Contact
         $this->link = new ArrayCollection();
         $this->fonctions = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -74,6 +81,8 @@ class Contact
             $this->link->add($link);
             $link->setContact($this);
         }
+        return $this;
+
     }
     /*
      * @return Collection<int, Fonction>
@@ -115,6 +124,4 @@ class Contact
 
         return $this;
     }
-
-
 }
