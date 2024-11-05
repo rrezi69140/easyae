@@ -70,7 +70,7 @@ class FacturationModelController extends AbstractController
             ->setClient($client ?? $updatedFacturationModel->getClient())
             ->setStatus("on")
         ;
-
+        
         $entityManager->persist($updatedFacturationModel);
         $entityManager->flush();
         $cache->invalidateTags(tag: ["facturationModel","client"]);
