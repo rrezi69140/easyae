@@ -36,16 +36,10 @@ class Contact
      */
     #[ORM\OneToMany(targetEntity: ContactLink::class, mappedBy: 'contact')]
     private Collection $link;
-     
-     * @var Collection<int, Fonction>
-     */
-    #[ORM\OneToMany(targetEntity: Fonction::class, mappedBy: 'Fonctions')]
-    private Collection $fonctions;
 
     public function __construct()
     {
-         $this->link = new ArrayCollection();
-        $this->fonctions = new ArrayCollection();
+        $this->link = new ArrayCollection();
     }
 
 
@@ -79,22 +73,11 @@ class Contact
         if (!$this->link->contains($link)) {
             $this->link->add($link);
             $link->setContact($this);
-     * @return Collection<int, Fonction>
-     */
-    public function getFonctions(): Collection
-    {
-        return $this->fonctions;
-    }
-
-    public function addFonction(Fonction $fonction): static
-    {
-        if (!$this->fonctions->contains($fonction)) {
-            $this->fonctions->add($fonction);
-            $fonction->setFonctions($this);
         }
-
-        return $this;
     }
+
+
+
 
     public function removeLink(ContactLink $link): static
     {
@@ -102,17 +85,9 @@ class Contact
             // set the owning side to null (unless already changed)
             if ($link->getContact() === $this) {
                 $link->setContact(null);
-    public function removeFonction(Fonction $fonction): static
-    {
-        if ($this->fonctions->removeElement($fonction)) {
-            // set the owning side to null (unless already changed)
-            if ($fonction->getFonctions() === $this) {
-                $fonction->setFonctions(null);
             }
         }
-
         return $this;
+
     }
-
-
 }
