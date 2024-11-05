@@ -68,15 +68,11 @@ class AccountController extends AbstractController
 
         $entityManager->persist($updatedAccount);
         $entityManager->flush();
-        
-        //Cette ligne est jamais utilisée
-        $accountJson = $serializer->serialize($updatedAccount, 'json', ['groups' => "account"]);
-        
         $location = $urlGenerator->generate("api_account_show", ['id' => $updatedAccount->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
     #[Route(path: "/{id}", name: 'api_account_delete', methods: ["DELETE"])]
-    public function delete(Account $account, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(Account $account, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
