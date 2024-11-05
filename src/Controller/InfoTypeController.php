@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Entity\InfoType;
 use App\Repository\InfoTypeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-#[Route('/api/infoType')]
+#[Route('/api/info-type')]
 class InfoTypeController extends AbstractController
 {
     #[Route(name: 'api_InfoType_index', methods: ["GET"])]
@@ -31,4 +33,16 @@ class InfoTypeController extends AbstractController
 
         return new JsonResponse($infoTypeJson, JsonResponse::HTTP_OK, [], true);
     }
+
+    #[Route(name: 'api_infoType_new', methods: ["POST"])]
+    public function create(Request $request, InfoTypeRepository $infoTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+     
+        $infoType = $serializer->deserialize($request->getContent(), InfoType::class, 'json', []);
+        $entityManager->persist($infoType);
+        $entityManager->flush();
+        $infoTypeJson = $serializer->serialize($infoType, 'json', ['groups' => "infoType"]);
+        return new JsonResponse($infoTypeJson, JsonResponse::HTTP_CREATED, [], true);
+    }
+
 }

@@ -4,9 +4,14 @@ namespace App\Entity;
 
 use App\Repository\ContactRepository;
 use App\Entity\Traits\StatisticsPropertiesTrait;
+
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+
 use Symfony\Component\Serializer\Annotation\Groups;
+
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
@@ -20,10 +25,12 @@ class Contact
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['client'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 15)]
-    #[Groups(['contact'])]
+
+    #[Groups(['client', 'contact'])]
 
     private ?string $name = null;
 
