@@ -68,7 +68,6 @@ class AccountController extends AbstractController
 
         $entityManager->persist($updatedAccount);
         $entityManager->flush();
-        $accountJson = $serializer->serialize($updatedAccount, 'json', ['groups' => "account"]);
         $location = $urlGenerator->generate("api_account_show", ['id' => $updatedAccount->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }

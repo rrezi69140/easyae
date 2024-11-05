@@ -20,16 +20,16 @@ class Contrat
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['contrat', 'facturation'])]
 
+    #[Groups(['contrat', 'facturation', 'client'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['contrat'])]
+    #[Groups(['contrat', 'client'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(['contrat'])]
+    #[Groups(['contrat', 'client'])]
     private ?bool $isDone = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -50,7 +50,7 @@ class Contrat
 
     #[ORM\ManyToOne(inversedBy: 'contrats')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['contrat'])]
+    #[Groups(['contrat, client'])]
     private ?Client $client = null;
 
     /**
