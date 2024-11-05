@@ -29,6 +29,8 @@ class Fonction
     private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'fonctions')]
+    #[Groups(['fonction'])]
+
     private ?Contact $contacts = null;
 
     public function getId(): ?int
@@ -60,12 +62,12 @@ class Fonction
         return $this;
     }
 
-    public function getFonctions(): ?Contact
+    public function getContact(): ?Contact
     {
         return $this->contacts;
     }
 
-    public function setFonctions(?Contact $contacts): static
+    public function setContact(?Contact $contacts): static
     {
         $this->contacts = $contacts;
 

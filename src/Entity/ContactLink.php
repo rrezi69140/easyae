@@ -25,6 +25,8 @@ class ContactLink
 
     #[ORM\ManyToOne(inversedBy: 'link')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['contactLink'])]
+
     private ?Contact $contact = null;
 
     #[ORM\Column(length: 255)]
@@ -32,6 +34,8 @@ class ContactLink
 
     #[ORM\ManyToOne(inversedBy: 'contactLinks')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['contactLink'])]
+
     private ?ContactLinkType $contactLinkType = null;
 
     public function getId(): ?int

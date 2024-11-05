@@ -16,7 +16,6 @@ class ContactFixtures extends Fixture implements DependentFixtureInterface
     public const POOL_MIN = 0;
     public const POOL_MAX = 10;
 
-
     private Generator $faker;
     public function __construct()
     {
@@ -24,36 +23,41 @@ class ContactFixtures extends Fixture implements DependentFixtureInterface
     }
     public function load(ObjectManager $manager): void
     {
-
-        $now = new \DateTime();
-
-        $prefixContactLink = ContactLinkFixtures::PREFIX;
+        // Création des tableaux de références
         $contactLinkRefs = [];
         for ($i = ContactLinkFixtures::POOL_MIN; $i < ContactLinkFixtures::POOL_MAX; $i++) {
-            $contactLinkRefs[] = $prefixContactLink . $i;
+            $contactLinkRefs[] = ContactLinkFixtures::PREFIX . $i;
         }
 
-        $prefixFonction = FonctionFixtures::PREFIX;
         $fonctionRefs = [];
         for ($i = FonctionFixtures::POOL_MIN; $i < FonctionFixtures::POOL_MAX; $i++) {
-            $fonctionRefs[] = $prefixFonction . $i;
+            $fonctionRefs[] = FonctionFixtures::PREFIX . $i;
         }
 
-        for ($i = 0; $i < 5; $i++) {
-            $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
-            $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
-            $links = $this->getReference($contactLinkRefs[array_rand($contactLinkRefs, 1)]);
-            $fonction = $this->getReference($fonctionRefs[array_rand($fonctionRefs, 1)]);
+        $contactLinkCount = count($contactLinkRefs);
+        $fonctionCount = count($fonctionRefs);
 
+        for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $contact = new Contact();
-            $contact
-                ->setName($this->faker->firstName(null))
-                ->addLink($links)
-                ->addFonction($fonction)
-                ->setCreatedAt($dateCreated)
-                ->setUpdatedAt($dateUpdated)
-                ->setStatus('on')
-            ;
+            $dateCreated = $this->faker->dateTimeBetween('-2 years', 'now');
+            
+            $contact->setName($this->faker->firstName(null))
+                    ->setCreatedAt($dateCreated)
+                    ->setUpdatedAt(new \DateTime())
+                    ->setStatus('on');
+
+            if ($contactLinkCount > 0) {
+                $linkIndex = min($i, $contactLinkCount - 1);
+                $link = $this->getReference($contactLinkRefs[$linkIndex]);
+                $contact->addLink($link);
+            }
+
+            if ($fonctionCount > 0) {
+                $fonctionIndex = min($i, $fonctionCount - 1);
+                $fonction = $this->getReference($fonctionRefs[$fonctionIndex]);
+                $contact->addFonction($fonction);
+            }
+
             $manager->persist($contact);
             $this->addReference(self::PREFIX . $i, $contact);
         }
