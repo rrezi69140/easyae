@@ -42,9 +42,12 @@ class ClientFixtures extends Fixture implements DependentFixtureInterface
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $client = new Client();
             $client->setName($this->faker->company);
-            $dateCreated = $this->faker->dateTimeBetween('-2 years', 'now');
-            $client->setCreatedAt($dateCreated);
-            $client->setUpdatedAt(new \DateTime());
+
+
+            $createdAt = $this->faker->dateTimeBetween('-2 years', 'now');
+            $client->setCreatedAt($createdAt);
+            $client->setUpdatedAt($this->faker->dateTimeBetween($createdAt, 'now'));
+            $client->setStatus($this->faker->randomElement(['on', 'off']));
 
             $client->setStatus('on');
 

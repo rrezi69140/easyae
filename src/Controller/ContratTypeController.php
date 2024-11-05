@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\ContratType;
 use App\Repository\ContratTypeRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -27,6 +29,17 @@ class ContratTypeController extends AbstractController
     {
         $contratTypeJson = $serializer->serialize($contratType, 'json', ['groups' => "contratType"]);
 
+        return new JsonResponse($contratTypeJson, JsonResponse::HTTP_OK, [], true);
+    }
+
+    #[Route(name: 'api_contrat_type_new', methods: ["POST"])]
+    public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $contratType = $serializer->deserialize($request->getContent(), ContratType::class, 'json', []);
+        $contratType->setStatus("on");
+        $entityManager->persist($contratType);
+        $entityManager->flush();
+        $contratTypeJson = $serializer->serialize($contratType, 'json', ['groups' => "contratType"]);
         return new JsonResponse($contratTypeJson, JsonResponse::HTTP_OK, [], true);
     }
 }

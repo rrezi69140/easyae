@@ -23,7 +23,7 @@ class Contrat
     #[Groups(['contrat', 'facturation', 'client'])]
 
     private ?int $id = null;
-    
+
     #[ORM\Column(length: 255)]
     #[Groups(['contrat', 'client'])]
     private ?string $name = null;
@@ -32,10 +32,14 @@ class Contrat
     #[Groups(['contrat', 'client'])]
     private ?bool $isDone = null;
 
+    #[Groups(['contrat'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['contrat'])]
     private ?\DateTimeInterface $startAt = null;
 
+    #[Groups(['contrat'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['contrat'])]
     private ?\DateTimeInterface $endAt = null;
 
     #[ORM\OneToOne(mappedBy: 'contrat', targetEntity: Facturation::class)]

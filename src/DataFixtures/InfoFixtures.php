@@ -24,11 +24,11 @@ class InfoFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $now = new \DateTime();
-        $prefixClient = InfoTypeFixtures::PREFIX;
+        $prefixInfo = InfoTypeFixtures::PREFIX;
 
         $infoTypeRefs = [];
         for ($i = InfoTypeFixtures::POOL_MIN; $i < InfoTypeFixtures::POOL_MAX; $i++) {
-            $infoTypeRefs[] = $prefixClient . $i;
+            $infoTypeRefs[] = $prefixInfo . $i;
         }
 
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {

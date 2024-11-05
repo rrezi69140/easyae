@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class ContactLinkFixtures extends Fixture
 {
-    public const PREFIX = "dateCreated#";
+    public const PREFIX = "contactLink#";
     public const POOL_MIN = 0;
     public const POOL_MAX = 10;
     private Generator $faker;
@@ -24,20 +24,36 @@ class ContactLinkFixtures extends Fixture
 
         $now = new \DateTime();
 
+        $prefixContact = ContactFixtures::PREFIX;
+        $contactRefs = [];
+        for ($i = ContactFixtures::POOL_MIN; $i < ContactFixtures::POOL_MAX; $i++) {
+            $contactRefs[] = $prefixContact . $i;
+        }
+
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
+            $contact = $this->getReference($contactRefs[array_rand($contactRefs, 1)]);       
+
             $contactLink = new ContactLink();
             $contactLink
-                ->setValue($this->faker->numerify('contact-###'))
+                ->setContact($contact)
+                ->setValue($this->faker->numerify('contact-link-###'))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus('on')
             ;
             $manager->persist($contactLink);
-            $this->addReference(name: self::PREFIX . $i, object: $contactLink);
+            $this->addReference( self::PREFIX . $i, $contactLink);
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            ContactFixtures::class,
+        ];
     }
 }
