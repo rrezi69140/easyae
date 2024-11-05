@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-#[Route('/api/info-Type')]
+#[Route('/api/info-type')]
 class InfoTypeController extends AbstractController
 {
     #[Route(name: 'api_InfoType_index', methods: ["GET"])]
