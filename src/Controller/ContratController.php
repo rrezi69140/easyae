@@ -44,7 +44,6 @@ class ContratController extends AbstractController
     public function create(Request $request, clientRepository $clientRepository, ContratTypeRepository $typeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
-        // dd($data);
         $contrat = $serializer->deserialize($request->getContent(), Contrat::class, 'json', []);
         $client = $clientRepository->find($data["client"]);
         $type = $typeRepository->find($data["contratType"]);
