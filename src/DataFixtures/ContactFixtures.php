@@ -23,18 +23,17 @@ class ContactFixtures extends Fixture implements DependentFixtureInterface
     }
     public function load(ObjectManager $manager): void
     {
-        // Création des tableaux de références
-        $contactLinkRefs = [];
-        for ($i = ContactLinkFixtures::POOL_MIN; $i < ContactLinkFixtures::POOL_MAX; $i++) {
-            $contactLinkRefs[] = ContactLinkFixtures::PREFIX . $i;
-        }
+        // $contactLinkRefs = [];
+        // for ($i = ContactLinkFixtures::POOL_MIN; $i < ContactLinkFixtures::POOL_MAX; $i++) {
+        //     $contactLinkRefs[] = ContactLinkFixtures::PREFIX . $i;
+        // }
 
         $fonctionRefs = [];
         for ($i = FonctionFixtures::POOL_MIN; $i < FonctionFixtures::POOL_MAX; $i++) {
             $fonctionRefs[] = FonctionFixtures::PREFIX . $i;
         }
 
-        $contactLinkCount = count($contactLinkRefs);
+        // $contactLinkCount = count($contactLinkRefs);
         $fonctionCount = count($fonctionRefs);
 
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
@@ -46,11 +45,11 @@ class ContactFixtures extends Fixture implements DependentFixtureInterface
                     ->setUpdatedAt(new \DateTime())
                     ->setStatus('on');
 
-            if ($contactLinkCount > 0) {
-                $linkIndex = min($i, $contactLinkCount - 1);
-                $link = $this->getReference($contactLinkRefs[$linkIndex]);
-                $contact->addLink($link);
-            }
+            // if ($contactLinkCount > 0) {
+            //     $linkIndex = min($i, $contactLinkCount - 1);
+            //     $link = $this->getReference($contactLinkRefs[$linkIndex]);
+            //     $contact->addLink($link);
+            // }
 
             if ($fonctionCount > 0) {
                 $fonctionIndex = min($i, $fonctionCount - 1);
@@ -68,7 +67,6 @@ class ContactFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            ContactLinkFixtures::class,
             FonctionFixtures::class
         ];
     }
