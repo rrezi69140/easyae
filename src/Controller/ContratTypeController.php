@@ -27,7 +27,6 @@ class ContratTypeController extends AbstractController
     {
         $idCache = "getAllContratType";
         $contratTypeJson = $cache->get($idCache, function (ItemInterface $item) use ($contratTypeRepository, $serializer) {
-            echo "test";
             $item->tag("contratType");
             $contratTypeList = $contratTypeRepository->findAll();
             $contratTypeJson = $serializer->serialize($contratTypeList, 'json', ['groups' => "contratType"]);
