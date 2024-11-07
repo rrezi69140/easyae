@@ -50,6 +50,9 @@ class Product
     #[ORM\ManyToMany(targetEntity: Contrat::class, mappedBy: 'products')]
     private Collection $contrats;
 
+    #[ORM\Column]
+    private ?float $fees = null;
+
     public function __construct()
     {
         $this->contrats = new ArrayCollection();
@@ -140,6 +143,18 @@ class Product
         if ($this->contrats->removeElement($contrat)) {
             $contrat->removeProduct($this);
         }
+
+        return $this;
+    }
+
+    public function getFees(): ?float
+    {
+        return $this->fees;
+    }
+
+    public function setFees(float $fees): static
+    {
+        $this->fees = $fees;
 
         return $this;
     }
