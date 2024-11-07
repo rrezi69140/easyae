@@ -18,9 +18,6 @@ class UserFixtures extends Fixture
     private Generator $faker;
     private UserPasswordHasherInterface $userPasswordHasher;
 
-
-    private $userPasswordHasher;
-
     public function __construct(UserPasswordHasherInterface $userPasswordHasher)
     {
         $this->userPasswordHasher = $userPasswordHasher;
@@ -33,11 +30,10 @@ class UserFixtures extends Fixture
         $admin->setUsername("admin");
         $admin->setRoles(["ROLE_ADMIN"]);
         $admin->setPassword($this->userPasswordHasher->hashPassword($admin, 'password'));
-        $this->addReference(self::ADMIN_REF, $admin);
 
         $manager->persist($admin);
         $manager->flush();
-        
+
         $this->addReference(self::ADMIN_REF, $admin);
     }
 }
