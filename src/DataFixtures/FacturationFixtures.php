@@ -13,7 +13,7 @@ class FacturationFixtures extends Fixture implements DependentFixtureInterface
 {
     public const PREFIX = "facturation#";
     public const PPOL_MIN = 0;
-    public const PPOL_MAX = 20;
+    public const PPOL_MAX = 3;
 
     private Generator $faker;
     public function __construct()
