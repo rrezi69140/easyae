@@ -32,6 +32,16 @@ class InfoFixtures extends Fixture implements DependentFixtureInterface
             $infoTypeRefs[] = $prefixInfo . $i;
         }
 
+        $clientRefs = [];
+        for ($i = ClientFixtures::POOL_MIN; $i < ClientFixtures::POOL_MAX; $i++) {
+            $clientRefs[] = ClientFixtures::PREFIX . $i;
+        }
+
+        $accountRefs = [];
+        for ($i = AccountFixtures::POOL_MIN; $i < AccountFixtures::POOL_MAX; $i++) {
+            $accountRefs[] = AccountFixtures::PREFIX . $i;
+        }
+
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $dateCreated = $this->faker->dateTimeInInterval('-1 year', '+1 year');
             $dateUpdated = $this->faker->dateTimeBetween($dateCreated, $now);
@@ -41,6 +51,8 @@ class InfoFixtures extends Fixture implements DependentFixtureInterface
                 ->setAnonymous($this->faker->boolean(20))
                 ->setInfo($this->faker->numerify('info-###'))
                 ->setType($type)
+                ->addClient($this->getReference($clientRefs[array_rand($clientRefs, 1)]))
+                ->addAccount($this->getReference($accountRefs[array_rand($accountRefs, 1)]))
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus($this->faker->boolean() ? "on" : "off")
@@ -59,6 +71,8 @@ class InfoFixtures extends Fixture implements DependentFixtureInterface
         return [
             UserFixtures::class,
             InfoTypeFixtures::class,
+            ClientFixtures::class,
+            AccountFixtures::class,
         ];
     }
 }

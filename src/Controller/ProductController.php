@@ -135,9 +135,10 @@ class ProductController extends AbstractController
 
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
+            if (!$this->isGranted("ROLE_ADMIN")) {
+                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
+            }
             $entityManager->remove($product);
-
-
         } else {
             $product
                 ->setStatus("off")
@@ -146,12 +147,8 @@ class ProductController extends AbstractController
 
             $entityManager->persist($product);
         }
-
-
-
         $entityManager->flush();
         $cache->invalidateTags(['product']);
-
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

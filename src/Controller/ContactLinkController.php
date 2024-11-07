@@ -113,13 +113,15 @@ class ContactLinkController extends AbstractController
 
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
+            if (!$this->isGranted("ROLE_ADMIN")) {
+                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
+            }
             $entityManager->remove($contactLink);
         } else {
             $contactLink->setStatus("off");
             $contactLink->setUpdatedBy($this->user->getId());
             $entityManager->persist($contactLink);
         }
-
         $entityManager->flush();
         $this->cache->invalidateTags(['contactLink']);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
