@@ -52,12 +52,12 @@ class Facturation
         return $this;
     }
 
-    public function getcontrat(): ?Contrat
+    public function getContrat(): ?Contrat
     {
         return $this->contrat;
     }
 
-    public function setcontrat(Contrat $contrat): static
+    public function setContrat(Contrat $contrat): static
     {
         $this->contrat = $contrat;
 

@@ -65,7 +65,7 @@ class FacturationController extends AbstractController
         $data = $request->toArray();
         $contrat = $contratRepository->find($data["contrat"]);
         $facturation = $serializer->deserialize($request->getContent(), Facturation::class, 'json', []);
-        $facturation->setcontrat($contrat)
+        $facturation->setContrat($contrat)
             ->setStatus("on")
             ->setCreatedBy($this->user->getId())
             ->setUpdatedBy($this->user->getId())
@@ -90,7 +90,9 @@ class FacturationController extends AbstractController
         }
 
         $updateFacturation = $serializer->deserialize(data: $request->getContent(), type: Facturation::class, format:"json", context: [AbstractNormalizer::OBJECT_TO_POPULATE => $facturation]);
-        $updateFacturation->setcontrat($contrat ?? $updateFacturation->getcontrat())->setStatus("on")->setUpdatedBy($this->user->getId());
+        $updateFacturation->setContrat($contrat ?? $updateFacturation->getcontrat())
+            ->setStatus("on")
+            ->setUpdatedBy($this->user->getId());
 
         $entityManager->persist(object: $updateFacturation);
         $entityManager->flush();
