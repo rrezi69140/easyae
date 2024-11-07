@@ -24,13 +24,15 @@ use App\Service\DeleteService;
 class InfoController extends AbstractController
 {
     #[Route(name: 'api_info_index', methods: ["GET"])]
-    #[IsGranted("ROLE_USER", message: "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh")]
+    #[IsGranted("ROLE_USER", message: "Vous n'avez pas les droits nécéssaires pour accéder a cette route.")]
     public function getAll(InfoRepository $infoRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
-        $idCache = "getAllAccounts";
+        $idCache = "getAllInfos";
         $infoJson = $cache->get($idCache, function (ItemInterface $item) use ($infoRepository, $serializer) {
             $item->tag("info");
             $item->tag("type");
+            $item->tag("client");
+            $item->tag("account");
             $infoList = $infoRepository->findAll();
             $infoJson = $serializer->serialize($infoList, 'json', ['groups' => "info"]);
 
