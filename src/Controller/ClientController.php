@@ -64,7 +64,7 @@ class ClientController extends AbstractController
         return new JsonResponse($clientJson, JsonResponse::HTTP_CREATED, [], true);
     }
 
-    #[Route(path: "/{id}", name: 'api_quantity_type_edit', methods: ["PATCH"])]
+    #[Route(path: "/{id}", name: 'api_client_edit', methods: ["PATCH"])]
     public function update(Client $client, UrlGeneratorInterface $urlGenerator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $updatedclient = $serializer->deserialize($request->getContent(), Client::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $client]);
@@ -76,7 +76,7 @@ class ClientController extends AbstractController
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
 
-    #[Route(path: "/{id}", name: 'api_quantity_type_delete', methods: ["DELETE"])]
+    #[Route(path: "/{id}", name: 'api_client_delete', methods: ["DELETE"])]
     public function delete(client $client, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
