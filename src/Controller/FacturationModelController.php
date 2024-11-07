@@ -13,14 +13,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use App\Service\DeleteService;
 use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/facturation-model')]
-#[IsGranted("ROLE_ADMIN", message: "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh")]
+#[IsGranted("ROLE_ADMIN", message: "No access!")]
 class FacturationModelController extends AbstractController
 {
     private $user;
@@ -78,7 +77,7 @@ class FacturationModelController extends AbstractController
     }
 
     #[Route(path: "/{id}", name: 'api_facturation_model_edit', methods: ["PATCH"])]
-    public function update(tagAwareCacheInterface $cache ,facturationModel $facturationModel, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function update(tagAwareCacheInterface $cache ,FacturationModel $facturationModel, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         if (!$this->user) {
             return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
@@ -90,7 +89,7 @@ class FacturationModelController extends AbstractController
         }
 
 
-        $updatedFacturationModel = $serializer->deserialize($request->getContent(), Account::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $facturationModel]);
+        $updatedFacturationModel = $serializer->deserialize($request->getContent(), FacturationModel::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $facturationModel]);
         $updatedFacturationModel
             ->setClient($client ?? $updatedFacturationModel->getClient())
             ->setStatus("on")
@@ -99,7 +98,7 @@ class FacturationModelController extends AbstractController
 
         $entityManager->persist($updatedFacturationModel);
         $entityManager->flush();
-        $cache->invalidateTags(tag: ["facturationModel","client"]);
+        $cache->invalidateTags(["facturationModel","client"]);
         $facturationModelJson = $serializer->serialize($updatedFacturationModel, 'json', ['groups' => "facturationModel"]);
         $location = $urlGenerator->generate("api_facturation_model_show", ['id' => $updatedFacturationModel->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
