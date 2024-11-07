@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Repository\ClientRepository;
+use App\Repository\FacturationModelRepository;
 use App\Repository\AccountRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -95,10 +96,37 @@ class ClientController extends AbstractController
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
 
+
+
+    #[Route(path: "/update_facturation_model/{id}", name: 'update_client_facturationModel', methods: ["POST"])]
+    public function updateFacturationModel(Client $client,FacturationModelRepository $modelRepository, UrlGeneratorInterface $urlGenerator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
+    {
+        $data = $request->toArray();
+
+        if (isset($data["facturationModel"])) {
+            $model = $modelRepository->find($data["facturationModel"]);
+        }
+
+        $updatedClient = $serializer->deserialize($request->getContent(), Client::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $client]);
+        $updatedClient
+            ->setStatus("on")
+            ->setFacturationModel($model)
+        ;
+
+        $entityManager->persist($updatedClient);
+        $entityManager->flush();
+
+        $cache->invalidateTags(["client"]);
+
+        $location = $urlGenerator->generate("api_client_show", ['id' => $updatedClient->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
+    }
     #[Route(path: "/{id}", name: 'api_client_delete', methods: ["DELETE"])]
+
     public function delete(Client $client, Request $request, DeleteService $deleteService): JsonResponse
     {
         $data = $request->toArray();
         return $deleteService->deleteEntity($client, $data, 'client');
+
     }
 }
