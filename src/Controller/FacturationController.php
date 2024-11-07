@@ -85,16 +85,16 @@ class FacturationController extends AbstractController
     #[Route(path: '/{id}', name: 'api_facturation_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, Facturation $facturation, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-
         $data = $request->toArray();
-
         if (isset($data['force']) && $data['force'] === true) {
+            if (!$this->isGranted("ROLE_ADMIN")) {
+                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
+            }
             $entityManager->remove(object: $facturation);
-            $entityManager->flush();
+        } else {
+            $facturation->setStatus("off");
+            $entityManager->persist(object: $facturation);
         }
-        $facturation->setStatus("off");
-
-        $entityManager->persist(object: $facturation);
         $entityManager->flush();
         $cache->invalidateTags(["facturation"]);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, []);
