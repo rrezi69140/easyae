@@ -50,7 +50,8 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
                 ->setUpdatedAt($dateUpdated)
                 ->setStatus($statuses[rand(0, count($statuses) - 1)])
                 ->setPrice($this->faker->randomFloat(2, 10, 100))
-                ->setPriceUnit($this->faker->randomFloat(2, 10, 100));
+                ->setPriceUnit($this->faker->randomFloat(2, 10, 100))
+                ->setFees($this->faker->numberBetween(0, 100));
             $manager->persist($product);
             $this->addReference(self::PREFIX . $i, $product);
         }
