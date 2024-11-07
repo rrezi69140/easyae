@@ -15,17 +15,29 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/api/contrat')]
 
 class ContratController extends AbstractController
 {
     #[Route(name: 'api_contrat_index', methods: ["GET"])]
-    public function getAll(ContratRepository $contratRepository, SerializerInterface $serializer): JsonResponse
+    public function getAll(ContratRepository $contratRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
-        $contratList = $contratRepository->findAll();
+        $idCache = "getAllContrats";
+        // $contratList = $contratRepository->findAll();
+        // $contratJson = $serializer->serialize($contratList, 'json', ['groups' => "contrat"]);
 
-        $contratJson = $serializer->serialize($contratList, 'json', ['groups' => "contrat"]);
+        $contratJson = $cache->get($idCache, function (ItemInterface $item) use ($contratRepository, $serializer) {
+            $item->tag("contrat");
+            $item->tag("client");
+            $item->tag("contrat_type");
+            $item->tag("product");
+            $contratList = $contratRepository->findAll();
+            $contratJson = $serializer->serialize($contratList, 'json', ['groups' => "contrat"]);
+            return $contratJson;
+        });
 
 
         return new JsonResponse($contratJson, JsonResponse::HTTP_OK, [], true);
@@ -41,7 +53,7 @@ class ContratController extends AbstractController
     }
 
     #[Route(name: 'api_contrat_new', methods: ["POST"])]
-    public function create(Request $request, clientRepository $clientRepository, ContratTypeRepository $typeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function create(Request $request, clientRepository $clientRepository, ContratTypeRepository $typeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
         $data = $request->toArray();
         $contrat = $serializer->deserialize($request->getContent(), Contrat::class, 'json', []);
@@ -59,13 +71,13 @@ class ContratController extends AbstractController
         ;
         $entityManager->persist($contrat);
         $entityManager->flush();
-
+        $cache->invalidateTags(["contrat"]);
         $contratJson = $serializer->serialize($contrat, 'json', ['groups' => "contrat"]);
         return new JsonResponse($contratJson, JsonResponse::HTTP_CREATED, [], true);
     }
 
     #[Route(path: "/{id}", name: 'api_contrat_edit', methods: ["PATCH"])]
-    public function update(Contrat $contrat, UrlGeneratorInterface $urlGenerator, Request $request, clientRepository $clientRepository, ContratTypeRepository $typeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function update(Contrat $contrat, UrlGeneratorInterface $urlGenerator, Request $request, clientRepository $clientRepository, ContratTypeRepository $typeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
         $data = $request->toArray();
         if (isset($data['client'])) {
@@ -93,13 +105,13 @@ class ContratController extends AbstractController
         ;
         $entityManager->persist($contrat);
         $entityManager->flush();
-
+        $cache->invalidateTags(["contrat"]);
         $location = $urlGenerator->generate("api_contrat_show", ['id' => $updatedContrat->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
 
     #[Route(path: "/{id}", name: 'api_contrat_delete', methods: ["DELETE"])]
-    public function delete(Contrat $contrat, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(Contrat $contrat, Request $request, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
@@ -110,7 +122,7 @@ class ContratController extends AbstractController
         }
 
         $entityManager->flush();
-
+        $cache->invalidateTags(["contrat"]);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }
