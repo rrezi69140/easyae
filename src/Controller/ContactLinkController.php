@@ -121,7 +121,7 @@ class ContactLinkController extends AbstractController
             $contactLink->setStatus("off");
             $contactLink->setUpdatedBy($this->user->getId());
             $entityManager->persist($contactLink);
-        }
+        }  
         $entityManager->flush();
         $this->cache->invalidateTags(['contactLink']);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);

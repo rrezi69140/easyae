@@ -67,7 +67,8 @@ class ClientController extends AbstractController
         if (is_null($client->getStatus())) {
             $client->setStatus("on")
                 ->setCreatedBy($this->user->getId())
-                ->setUpdatedBy($this->user->getId());
+                ->setUpdatedBy($this->user->getId())
+            ;
         }
 
         $contact = $client->getContact();

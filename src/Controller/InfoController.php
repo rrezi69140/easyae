@@ -44,7 +44,7 @@ class InfoController extends AbstractController
             $infoJson = $serializer->serialize($infoList, 'json', ['groups' => "info"]);
 
             return $infoJson;
-
+            
         });
 
 

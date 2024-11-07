@@ -97,7 +97,8 @@ class FacturationController extends AbstractController
         }
 
         $updateFacturation = $serializer->deserialize(data: $request->getContent(), type: Facturation::class, format:"json", context: [AbstractNormalizer::OBJECT_TO_POPULATE => $facturation]);
-        $updateFacturation->setContrat($contrat ?? $updateFacturation->getcontrat())->setModel($model ?? $updateFacturation->getModel())
+        $updateFacturation->setContrat($contrat ?? $updateFacturation->getcontrat())
+            ->setModel($model ?? $updateFacturation->getModel())
             ->setStatus("on")
             ->setUpdatedBy($this->user->getId());
 
