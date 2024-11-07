@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Account;
 use App\Entity\User;
-use App\Repository\AccountRepository;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -97,7 +95,6 @@ class UserController extends AbstractController
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($user);
         } else {
-            $user->setStatus('off');
             $entityManager->persist($user);
         }
 
@@ -107,10 +104,10 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '/register',name: 'api_user_register', methods: ['POST'])]
-    public function register(ValidatorInterface $validator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
+    public function register(ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         $data = $request->toArray();
-        $user = $serializer->deserialize($request->getContent(), User::class, 'json', []);
+        $user = $serializer->deserialize($request->getContent(), User::class, 'json', ['user']);
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
 
         $errors = $validator->validate($user);
