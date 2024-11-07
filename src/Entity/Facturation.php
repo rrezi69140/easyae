@@ -35,6 +35,10 @@ class Facturation
     #[Groups(['facturation'])]
     private ?Contrat $contrat = null;
 
+    #[ORM\ManyToOne(inversedBy: 'facturations')]
+    #[Groups(['facturation'])]
+    private ?FacturationModel $model = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +64,18 @@ class Facturation
     public function setcontrat(Contrat $contrat): static
     {
         $this->contrat = $contrat;
+
+        return $this;
+    }
+
+    public function getModel(): ?FacturationModel
+    {
+        return $this->model;
+    }
+
+    public function setModel(?FacturationModel $model): static
+    {
+        $this->model = $model;
 
         return $this;
     }

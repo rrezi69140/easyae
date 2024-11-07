@@ -19,11 +19,11 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use App\Service\DeleteService;
 
 #[Route('/api/contrat-type')]
+#[IsGranted("ROLE_ADMIN", message: "Vous n'avez pas la permission")]
 
 class ContratTypeController extends AbstractController
 {
     #[Route(name: 'api_contrat_type_index', methods: ["GET"])]
-    #[IsGranted("ROLE_ADMIN", message: "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh")]
     public function getAll(ContratTypeRepository $contratTypeRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
         $idCache = "getAllContratType";

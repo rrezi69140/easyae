@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Repository\ClientRepository;
+use App\Repository\AccountRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,6 +33,14 @@ class ClientController extends AbstractController
         });
 
         return new JsonResponse($clientJson, JsonResponse::HTTP_OK, [], true);
+    }
+
+    #[Route(path: '/{id}/carnet-account', name: 'api_client_carnet_account', methods: ["GET"])]
+    public function getCarnetAccount(Client $client = null, SerializerInterface $serializer, AccountRepository $accountRepository) {
+        $accountsList = $accountRepository->findBy(['client' => $client->getId()]);
+        $accountsJson = $serializer->serialize($accountsList, 'json', ['groups' => ["account"]]);
+        
+        return new JsonResponse($accountsJson, JsonResponse::HTTP_OK, [], true);
     }
 
     #[Route(path: '/{id}', name: 'api_client_show', methods: ["GET"])]
