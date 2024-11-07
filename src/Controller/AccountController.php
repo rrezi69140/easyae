@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Account;
 use App\Repository\AccountRepository;
 use App\Repository\ClientRepository;
+use App\Repository\InfoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,6 +32,7 @@ class AccountController extends AbstractController
         $accountJson = $cache->get($idCache, function (ItemInterface $item) use ($accountRepository, $serializer) {
             $item->tag("account");
             $item->tag("client");
+            $item->tag("info");
             $accountList = $accountRepository->findAll();
             $accountJson = $serializer->serialize($accountList, 'json', ['groups' => "account"]);
 
@@ -48,12 +50,14 @@ class AccountController extends AbstractController
     }
 
     #[Route(name: 'api_account_new', methods: ["POST"])]
-    public function create(ValidatorInterface $validator, TagAwareCacheInterface $cache, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function create(ValidatorInterface $validator, TagAwareCacheInterface $cache, Request $request, ClientRepository $clientRepository, InfoRepository $infoRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
         $client = $clientRepository->find($data["client"]);
+        $info = $infoRepository->find($data["info"]);
         $account = $serializer->deserialize($request->getContent(), Account::class, 'json', []);
         $account->setClient($client)
+            ->addInfo($info)
             ->setStatus("on")
         ;
 
@@ -69,24 +73,28 @@ class AccountController extends AbstractController
     }
 
     #[Route(path: "/{id}", name: 'api_account_edit', methods: ["PATCH"])]
-    public function update(TagAwareCacheInterface $cache, Account $account, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function update(TagAwareCacheInterface $cache, Account $account, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, InfoRepository $infoRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
         if (isset($data['client'])) {
 
             $client = $clientRepository->find($data["client"]);
         }
+        if (isset($data["info"])) {
+            $info = $infoRepository->find($data["info"]);
+        }
 
 
         $updatedAccount = $serializer->deserialize($request->getContent(), Account::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $account]);
         $updatedAccount
             ->setClient($client ?? $updatedAccount->getClient())
+            ->addInfo($info ?? $updatedAccount->getInfo())
             ->setStatus("on")
         ;
 
         $entityManager->persist($updatedAccount);
         $entityManager->flush();
-        $cache->invalidateTags(["account", "client"]);
+        $cache->invalidateTags(["account", "client", "info"]);
 
         $location = $urlGenerator->generate("api_account_show", ['id' => $updatedAccount->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
