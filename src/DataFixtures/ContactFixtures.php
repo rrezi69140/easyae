@@ -39,11 +39,13 @@ class ContactFixtures extends Fixture implements DependentFixtureInterface
         for ($i = self::POOL_MIN; $i < self::POOL_MAX; $i++) {
             $contact = new Contact();
             $dateCreated = $this->faker->dateTimeBetween('-2 years', 'now');
-            
+            $user = $this->getReference(UserFixtures::ADMIN_REF);
+
             $contact->setName($this->faker->firstName(null))
                     ->setCreatedAt($dateCreated)
                     ->setUpdatedAt(new \DateTime())
-                    ->setStatus('on');
+                    ->setStatus('on')
+                    ->setUser($user);
 
             // if ($contactLinkCount > 0) {
             //     $linkIndex = min($i, $contactLinkCount - 1);
