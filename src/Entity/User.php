@@ -44,11 +44,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Info>
      */
     #[ORM\OneToMany(targetEntity: Info::class, mappedBy: 'user')]
-    private Collection $Info;
+    private Collection $info;
 
     public function __construct()
     {
-        $this->Info = new ArrayCollection();
+        $this->info = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -131,13 +131,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getInfo(): Collection
     {
-        return $this->Info;
+        return $this->info;
     }
 
     public function addInfo(Info $info): static
     {
-        if (!$this->Info->contains($info)) {
-            $this->Info->add($info);
+        if (!$this->info->contains($info)) {
+            $this->info->add($info);
             $info->setUser($this);
         }
 
@@ -146,7 +146,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeInfo(Info $info): static
     {
-        if ($this->Info->removeElement($info)) {
+        if ($this->info->removeElement($info)) {
             // set the owning side to null (unless already changed)
             if ($info->getUser() === $this) {
                 $info->setUser(null);
