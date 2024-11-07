@@ -90,7 +90,6 @@ class AccountController extends AbstractController
 
         $data = $request->toArray();
         if (isset($data['client'])) {
-
             $client = $clientRepository->find($data["client"]);
         }
 
@@ -112,20 +111,21 @@ class AccountController extends AbstractController
     #[Route(path: "/{id}", name: 'api_account_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, Account $account, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($account);
-
-
         } else {
             $account
                 ->setStatus("off")
+                ->setUpdatedBy($this->user->getId())
             ;
 
             $entityManager->persist($account);
         }
-
-
 
         $entityManager->flush();
         $cache->invalidateTags(["account"]);

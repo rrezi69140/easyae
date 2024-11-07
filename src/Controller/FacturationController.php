@@ -103,6 +103,9 @@ class FacturationController extends AbstractController
     #[Route(path: '/{id}', name: 'api_facturation_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, Facturation $facturation, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
 
         $data = $request->toArray();
 
@@ -111,6 +114,7 @@ class FacturationController extends AbstractController
             $entityManager->flush();
         }
         $facturation->setStatus("off");
+        $facturation->setUpdatedBy($this->user->getId());
 
         $entityManager->persist(object: $facturation);
         $entityManager->flush();

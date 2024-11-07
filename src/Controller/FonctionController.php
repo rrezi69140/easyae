@@ -90,11 +90,16 @@ class FonctionController extends AbstractController
     #[Route(path: "/{id}", name: 'api_fonction_delete', methods: ["DELETE"])]
     public function delete(Fonction $fonction, Request $request, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($fonction);
         } else {
             $fonction->setStatus("off");
+            $fonction->setUpdatedBy($this->user->getId());
             $entityManager->persist($fonction);
         }
 

@@ -128,6 +128,10 @@ class ContactController extends AbstractController
     #[Route(path: "/{id}", name: 'api_contact_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, Contact $contact, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         
         if (isset($data['force']) && $data['force'] === true) {
@@ -135,7 +139,8 @@ class ContactController extends AbstractController
 
         } else {
             $contact
-                ->setStatus("off");
+                ->setStatus("off")
+                ->setUpdatedBy($this->user->getId());
             $entityManager->persist($contact);
         }
 

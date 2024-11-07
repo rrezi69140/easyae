@@ -99,6 +99,10 @@ class QuantityTypeController extends AbstractController
     #[Route(path: "/{id}", name: 'api_quantity_type_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, QuantityType $quantityType, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($quantityType);
@@ -107,6 +111,7 @@ class QuantityTypeController extends AbstractController
         } else {
             $quantityType
                 ->setStatus("off")
+                ->setUpdatedBy($this->user->getId())
             ;
             $entityManager->persist($quantityType);
         }

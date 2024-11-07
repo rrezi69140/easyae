@@ -106,12 +106,17 @@ class ClientController extends AbstractController
     #[Route(path: "/{id}", name: 'api_client_delete', methods: ["DELETE"])]
     public function delete(Client $client, Request $request, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
 
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($client);
         } else {
             $client->setStatus("off");
+            $client->setUpdatedBy($this->user->getId());
             $entityManager->persist($client);
         }
 

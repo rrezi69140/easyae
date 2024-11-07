@@ -93,9 +93,11 @@ class InfoTypeController extends AbstractController
     }
     #[Route(path: "/{id}", name: 'api_infoType_delete', methods: ["DELETE"])]
     public function delete( TagAwareCacheInterface $cache,InfoType $infoType,UrlGeneratorInterface $urlGenerator, Request $request,SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
-   
-    
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+        
         $data = $request->toArray();
     
         if (isset($data['force']) && $data['force'] === true) {
@@ -105,6 +107,7 @@ class InfoTypeController extends AbstractController
         } else {
             $infoType
                 ->setStatus("off")
+                ->setUpdatedBy($this->user->getId())
             ;
 
             $entityManager->persist($infoType);

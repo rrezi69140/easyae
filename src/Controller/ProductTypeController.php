@@ -112,6 +112,10 @@ class ProductTypeController extends AbstractController
     #[Route(path: "/{id}", name: 'api_product_type_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, ProductType $productType, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($productType);
@@ -120,6 +124,7 @@ class ProductTypeController extends AbstractController
         } else {
             $productType
                 ->setStatus("off")
+                ->setUpdatedBy($this->user->getId())
             ;
 
             $entityManager->persist($productType);

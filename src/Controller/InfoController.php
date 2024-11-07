@@ -117,12 +117,17 @@ class InfoController extends AbstractController
     #[Route(path: "/{id}", name: 'api_info_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, Info $info, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($info);
         } else {
             $info
                 ->setStatus("off")
+                ->setUpdatedBy($this->user->getId())
             ;
             $entityManager->persist($info);
         }

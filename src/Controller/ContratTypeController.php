@@ -109,12 +109,17 @@ class ContratTypeController extends AbstractController
     #[Route(path: "/{id}", name: 'api_contrat_type_delete', methods: ["DELETE"])]
     public function delete(ValidatorInterface $validator, TagAwareCacheInterface $cache, ContratType $contratType, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($contratType);
         } else {
             $contratType
                 ->setStatus("off")
+                ->setUpdatedBy($this->user->getId())
             ;
             $entityManager->persist($contratType);
         }

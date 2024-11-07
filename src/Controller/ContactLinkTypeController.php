@@ -78,11 +78,16 @@ class ContactLinkTypeController extends AbstractController
     #[Route(path: "/{id}", name: 'api_contact_link_type_delete', methods: ["DELETE"])]
     public function delete(ContactLinkType $contactLinkType, Request $request, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($contactLinkType);
         } else {
             $contactLinkType->setStatus("off");
+            $contactLinkType->setUpdatedBy($this->user->getId());
             $entityManager->persist($contactLinkType);
         }
 

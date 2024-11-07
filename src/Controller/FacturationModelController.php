@@ -100,6 +100,10 @@ class FacturationModelController extends AbstractController
     #[Route(path: "/{id}", name: 'api_facturation_model_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, FacturationModel $facturationModel, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove($facturationModel);
@@ -108,6 +112,7 @@ class FacturationModelController extends AbstractController
         } else {
             $facturationModel
                 ->setStatus("off")
+                ->setUpdatedBy($this->user->getId())
             ;
 
             $entityManager->persist($facturationModel);
