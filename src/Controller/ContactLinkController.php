@@ -13,11 +13,13 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/contact-link')]
+#[IsGranted("ROLE_ADMIN", message: "Vous n'avez pas l'accès")]
 
 class ContactLinkController extends AbstractController
 {
@@ -105,7 +107,7 @@ class ContactLinkController extends AbstractController
     }
 
     #[Route(path: "/{id}", name: 'api_contact_link_delete', methods: ["DELETE"])]
-    public function delete(ContactLink $contactLink, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(ContactLink $contactLink, Request $request, DeleteService $deleteService): JsonResponse
     {
         if (!$this->user) {
             return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);

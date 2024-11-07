@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\DeleteService;
 
 #[Route('/api/info-type')]
 class InfoTypeController extends AbstractController
@@ -91,31 +91,15 @@ class InfoTypeController extends AbstractController
         $location = $urlGenerator->generate("api_account_show", ['id' => $updatedInfoType->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
+
     #[Route(path: "/{id}", name: 'api_infoType_delete', methods: ["DELETE"])]
-    public function delete( TagAwareCacheInterface $cache,InfoType $infoType,UrlGeneratorInterface $urlGenerator, Request $request,SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(InfoType $infoType, Request $request, DeleteService $deleteService): JsonResponse
     {
         if (!$this->user) {
             return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
         }
         
         $data = $request->toArray();
-
-        if (isset($data['force']) && $data['force'] === true) {
-            if (!$this->isGranted("ROLE_ADMIN")) {
-                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
-            }
-            $entityManager->remove($infoType);
-        } else {
-            $infoType
-                ->setStatus("off")
-                ->setUpdatedBy($this->user->getId())
-            ;
-
-            $entityManager->persist($infoType);
-        }
-        $entityManager->flush();
-        $cache->invalidateTags(["infoType"]);
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+        return $deleteService->deleteEntity($infoType, $data, 'infoType');
     }
-
 }

@@ -2,19 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Contrat;
 use App\Entity\Facturation;
-use App\Repository\ContratRepository;
-use App\Repository\FacturationModelRepository;
 use App\Repository\FacturationRepository;
+use App\Repository\ContratRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -109,9 +103,8 @@ class FacturationController extends AbstractController
         $facturationJson = $serializer->serialize(data: $updateFacturation, format: "json", context: ["groups" => "facturation"]);
         return new JsonResponse($facturationJson, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
-
-    #[Route(path: '/{id}', name: 'api_facturation_delete', methods: ["DELETE"])]
-    public function delete(TagAwareCacheInterface $cache, Facturation $facturation, Request $request, EntityManagerInterface $entityManager): JsonResponse
+      #[Route(path: '/{id}', name: 'api_facturation_delete', methods: ["DELETE"])]
+    public function delete(Facturation $facturation, Request $request, DeleteService $deleteService): JsonResponse
     {
         if (!$this->user) {
             return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);

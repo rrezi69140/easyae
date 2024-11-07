@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\DeleteService;
 
 #[Route('/api/product')]
 
@@ -127,28 +127,13 @@ class ProductController extends AbstractController
     }
 
     #[Route(path: "/{id}", name: 'api_product_delete', methods: ["DELETE"])]
-    public function delete(TagAwareCacheInterface $cache, Product $product, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(Product $product, Request $request, DeleteService $deleteService): JsonResponse
     {
         if (!$this->user) {
             return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         $data = $request->toArray();
-        if (isset($data['force']) && $data['force'] === true) {
-            if (!$this->isGranted("ROLE_ADMIN")) {
-                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
-            }
-            $entityManager->remove($product);
-        } else {
-            $product
-                ->setStatus("off")
-                ->setUpdatedBy($this->user->getId())
-            ;
-
-            $entityManager->persist($product);
-        }
-        $entityManager->flush();
-        $cache->invalidateTags(['product']);
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        return $deleteService->deleteEntity($product, $data, 'product');
     }
 }

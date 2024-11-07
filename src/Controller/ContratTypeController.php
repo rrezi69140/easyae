@@ -16,9 +16,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Bundle\SecurityBundle\Security;
+use App\Service\DeleteService;
 
 #[Route('/api/contrat-type')]
+#[IsGranted("ROLE_ADMIN", message: "Vous n'avez pas la permission")]
 
 class ContratTypeController extends AbstractController
 {
@@ -30,7 +31,6 @@ class ContratTypeController extends AbstractController
     }
 
     #[Route(name: 'api_contrat_type_index', methods: ["GET"])]
-    #[IsGranted("ROLE_ADMIN", message: "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh")]
     public function getAll(ContratTypeRepository $contratTypeRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
         $idCache = "getAllContratType";
@@ -107,28 +107,13 @@ class ContratTypeController extends AbstractController
     }
 
     #[Route(path: "/{id}", name: 'api_contrat_type_delete', methods: ["DELETE"])]
-    public function delete(ValidatorInterface $validator, TagAwareCacheInterface $cache, ContratType $contratType, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function delete(ContratType $contratType, Request $request, DeleteService $deleteService): JsonResponse
     {
         if (!$this->user) {
             return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         $data = $request->toArray();
-        if (isset($data['force']) && $data['force'] === true) {
-            if (!$this->isGranted("ROLE_ADMIN")) {
-                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
-            }
-            $entityManager->remove($contratType);
-        } else {
-            $contratType->setStatus("off");
-            $contratType
-                ->setStatus("off")
-                ->setUpdatedBy($this->user->getId())
-            ;
-            $entityManager->persist($contratType);
-        }
-        $entityManager->flush();
-        $cache->invalidateTags(["contratType"]);
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+        return $deleteService->deleteEntity($contratType, $data, 'contratType');
     }
 }
