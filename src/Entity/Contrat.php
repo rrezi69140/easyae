@@ -48,7 +48,7 @@ class Contrat
 
     #[ORM\ManyToOne(inversedBy: 'contrats')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['contrat, client'])]
+    #[Groups(['contrat', 'client'])]
     private ?Client $client = null;
 
     /**
