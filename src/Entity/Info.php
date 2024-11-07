@@ -57,7 +57,7 @@ class Info
         $this->account = new ArrayCollection();
     }
 
-    #[ORM\ManyToOne(inversedBy: 'Info')]
+    #[ORM\ManyToOne(inversedBy: 'info')]
     private ?User $user = null;
 
     public function getId(): ?int

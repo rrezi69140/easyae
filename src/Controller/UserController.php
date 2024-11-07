@@ -9,6 +9,7 @@ use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -106,10 +107,11 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '/register',name: 'api_user_register', methods: ['POST'])]
-    public function register(ValidatorInterface $validator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function register(ValidatorInterface $validator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         $data = $request->toArray();
         $user = $serializer->deserialize($request->getContent(), User::class, 'json', []);
+        $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
 
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
