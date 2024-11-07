@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use App\Service\DeleteService;
 
 #[Route('/api/client')]
 class ClientController extends AbstractController
@@ -86,20 +87,9 @@ class ClientController extends AbstractController
     }
 
     #[Route(path: "/{id}", name: 'api_client_delete', methods: ["DELETE"])]
-    public function delete(Client $client, Request $request, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
+    public function delete(Client $client, Request $request, DeleteService $deleteService): JsonResponse
     {
         $data = $request->toArray();
-        if (isset($data['force']) && $data['force'] === true) {
-            if (!$this->isGranted("ROLE_ADMIN")) {
-                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
-            }
-            $entityManager->remove($client);
-        } else {
-            $client->setStatus("off");
-            $entityManager->persist($client);
-        }
-        $entityManager->flush();
-        $cache->invalidateTags(["client"]);
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
-    }    
+        return $deleteService->deleteEntity($client, $data, 'client');
+    }
 }
