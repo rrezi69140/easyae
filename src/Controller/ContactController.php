@@ -17,12 +17,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use App\Service\DeleteService;
 
 #[Route('/api/contact')]
 
 class ContactController extends AbstractController
 {
+    private $user;
+
+    public function __construct(Security $security)
+    {
+        $this->user = $security->getUser();
+    }
+
     #[Route(name: 'api_contact_index', methods: ["GET"])]
     #[IsGranted("ROLE_ADMIN", message: "MESSAGE CONTACT")]
 
@@ -55,11 +63,18 @@ class ContactController extends AbstractController
     #[Route(name: 'api_contact_new', methods: ["POST"])]
     public function create(ValidatorInterface $validator, TagAwareCacheInterface $cache, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $contact = $serializer->deserialize($request->getContent(), Contact::class, 'json');
         
         $contact->setStatus("on")
             ->setCreatedAt(new \DateTime())
-            ->setUpdatedAt(new \DateTime());
+            ->setUpdatedAt(new \DateTime())
+            ->setCreatedBy($this->user->getId())
+            ->setUpdatedBy($this->user->getId())
+        ;
 
         $errors = $validator->validate($contact);
         if (count($errors) > 0) {
@@ -84,6 +99,10 @@ class ContactController extends AbstractController
         EntityManagerInterface $entityManager,
         UrlGeneratorInterface $urlGenerator
     ): JsonResponse {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $serializer->deserialize(
             $request->getContent(),
             Contact::class,
@@ -91,7 +110,10 @@ class ContactController extends AbstractController
             [AbstractNormalizer::OBJECT_TO_POPULATE => $contact]
         );
 
-        $contact->setUpdatedAt(new \DateTime());
+        $contact->setUpdatedAt(new \DateTime())
+            ->setUpdatedBy($this->user->getId())
+        ;
+
         $entityManager->flush();
         $cache->invalidateTags(["contact"]);
 
@@ -108,6 +130,10 @@ class ContactController extends AbstractController
     #[Route(path: "/{id}", name: 'api_contact_delete', methods: ["DELETE"])]
     public function delete(Contact $contact, Request $request, DeleteService $deleteService): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         return $deleteService->deleteEntity($contact, $data, 'contact');
     }
