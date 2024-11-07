@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Entity;
+
+use App\Entity\Traits\StatisticsPropertiesTrait;
+use App\Repository\InfoRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+#[ORM\Entity(repositoryClass: InfoRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+
+class Info
+{
+
+    use StatisticsPropertiesTrait;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    #[Groups(['info'])]
+    private ?int $id = null;
+
+    #[ORM\Column]
+    #[Groups(['info'])]
+    private ?bool $isAnonymous = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['info'])]
+    private ?string $info = null;
+
+    #[ORM\ManyToOne(inversedBy: 'infos')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['info'])]
+    private ?InfoType $type = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function isAnonymous(): ?bool
+    {
+        return $this->isAnonymous;
+    }
+
+    public function setAnonymous(bool $isAnonymous): static
+    {
+        $this->isAnonymous = $isAnonymous;
+
+        return $this;
+    }
+
+    public function getInfo(): ?string
+    {
+        return $this->info;
+    }
+
+    public function setInfo(string $info): static
+    {
+        $this->info = $info;
+
+        return $this;
+    }
+
+    public function getType(): ?InfoType
+    {
+        return $this->type;
+    }
+
+    public function setType(?InfoType $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+}
