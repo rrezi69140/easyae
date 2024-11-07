@@ -14,9 +14,18 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+
 #[Route('/api/info-type')]
 class InfoTypeController extends AbstractController
 {
+    private $user;
+
+    public function __construct(Security $security)
+    {
+        $this->user = $security->getUser();
+    }
+
     #[Route(name: 'api_InfoType_index', methods: ["GET"])]
     public function getAll(InfoTypeRepository $infoTypeRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -27,7 +36,6 @@ class InfoTypeController extends AbstractController
             $infoTypeJson = $serializer->serialize($infoTypeList, 'json', ['groups' => "infoType"]);
             return $infoTypeJson;
         });
-
 
         return new JsonResponse($infoTypeJson, JsonResponse::HTTP_OK, [], true);
     }
@@ -45,8 +53,16 @@ class InfoTypeController extends AbstractController
     #[Route(name: 'api_infoType_new', methods: ["POST"])]
     public function create(TagAwareCacheInterface $cache,Request $request, InfoTypeRepository $infoTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
-     
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $infoType = $serializer->deserialize($request->getContent(), InfoType::class, 'json', []);
+        $infoType
+            ->setCreatedBy($this->user->getId())
+            ->setUpdatedBy($this->user->getId())
+        ;
+
         $entityManager->persist($infoType);
         $entityManager->flush();
         $cache->invalidateTags(["infoType"]);
@@ -57,12 +73,16 @@ class InfoTypeController extends AbstractController
     #[Route(path: "/{id}", name: 'api_infoType_edit', methods: ["PATCH"])]
     public function update(TagAwareCacheInterface $cache,InfoType $infoType, UrlGeneratorInterface $urlGenerator, Request $request, InfoTypeRepository $infoTypeRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
-        $data = $request->toArray();
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
 
+        $data = $request->toArray();
 
         $updatedInfoType = $serializer->deserialize($request->getContent(), InfoType::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $infoType]);
         $updatedInfoType
             ->setStatus("on")
+            ->setUpdatedBy($this->user->getId())
         ;
         $entityManager->persist($updatedInfoType);
         $entityManager->flush();

@@ -13,17 +13,21 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Cache\ItemInterface;
-
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/contact-link-type')]
 
 class ContactLinkTypeController extends AbstractController
 {
+    private $user;
+
     public function __construct(
-        private readonly TagAwareCacheInterface $cache
-    )
-    {}
+        private readonly TagAwareCacheInterface $cache,
+        Security $security
+    ) {
+        $this->user = $security->getUser();
+    }
 
     #[Route(name: 'api_contact_link_type_index', methods: ["GET"])]
     public function getAll(ContactLinkTypeRepository $contactLinkTypeRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
@@ -52,12 +56,17 @@ class ContactLinkTypeController extends AbstractController
     #[Route(path: "/{id}", name: 'api_contact_link_type_edit', methods: ["PATCH"])]
     public function update(ContactLinkType $contactLinkType, UrlGeneratorInterface $urlGenerator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $updatedContactLinkType = $serializer->deserialize($request->getContent(), $contactLinkType::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $contactLinkType]);
+        $updatedContactLinkType->setUpdatedBy($this->user->getId());
 
         $entityManager->persist($updatedContactLinkType);
         $entityManager->flush();
 
-//        $contactLinkTypeJson = $serializer->serialize($updatedContactLinkType, 'json', ['groups' => "contactLinkType"]);
+        //        $contactLinkTypeJson = $serializer->serialize($updatedContactLinkType, 'json', ['groups' => "contactLinkType"]);
 
 
         $cache->invalidateTags(["contactLinkType", "client"]);

@@ -17,11 +17,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/account')]
 
 class AccountController extends AbstractController
 {
+    private $user;
+
+    public function __construct(Security $security)
+    {
+        $this->user = $security->getUser();
+    }
+
     #[Route(name: 'api_account_index', methods: ["GET"])]
     #[IsGranted("ROLE_ADMIN", message: "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh")]
     public function getAll(AccountRepository $accountRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
@@ -37,9 +45,6 @@ class AccountController extends AbstractController
 
         });
 
-
-
-
         return new JsonResponse($accountJson, JsonResponse::HTTP_OK, [], true);
     }
     #[Route(path: '/{id}', name: 'api_account_show', methods: ["GET"])]
@@ -52,11 +57,17 @@ class AccountController extends AbstractController
     #[Route(name: 'api_account_new', methods: ["POST"])]
     public function create(ValidatorInterface $validator, TagAwareCacheInterface $cache, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+        
         $data = $request->toArray();
         $client = $clientRepository->find($data["client"]);
         $account = $serializer->deserialize($request->getContent(), Account::class, 'json', []);
         $account->setClient($client)
             ->setStatus("on")
+            ->setCreatedBy($this->user->getId())
+            ->setUpdatedBy($this->user->getId())
         ;
 
         $errors = $validator->validate($account);
@@ -73,6 +84,10 @@ class AccountController extends AbstractController
     #[Route(path: "/{id}", name: 'api_account_edit', methods: ["PATCH"])]
     public function update(TagAwareCacheInterface $cache, Account $account, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['client'])) {
 
@@ -84,6 +99,7 @@ class AccountController extends AbstractController
         $updatedAccount
             ->setClient($client ?? $updatedAccount->getClient())
             ->setStatus("on")
+            ->setUpdatedBy($this->user->getId())
         ;
 
         $entityManager->persist($updatedAccount);

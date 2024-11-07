@@ -8,11 +8,19 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\FacturationModel;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/facturation-model')]
 
 class FacturationModelController extends AbstractController
 {
+    private $user;
+
+    public function __construct(Security $security)
+    {
+        $this->user = $security->getUser();
+    }
+
     #[Route(name: 'api_facturation_model_index', methods: ["GET"])]
     public function getAll(FacturationModelRepository $facturationModelRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -41,11 +49,17 @@ class FacturationModelController extends AbstractController
     #[Route(name: 'api_facturation_model_new', methods: ["POST"])]
     public function create(tagAwareCacheInterface $cache, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         $client = $clientRepository->find($data["client"]);
         $facturationModel = $serializer->deserialize($request->getContent(), FacturationModel::class, 'json', []);
         $facturationModel->setClient($client)
             ->setStatus("on")
+            ->setCreatedBy($this->user->getId())
+            ->setUpdatedBy($this->user->getId())
         ;
         $entityManager->persist($facturationModel);
         $entityManager->flush();
@@ -57,6 +71,10 @@ class FacturationModelController extends AbstractController
     #[Route(path: "/{id}", name: 'api_facturation_model_edit', methods: ["PATCH"])]
     public function update(tagAwareCacheInterface $cache ,facturationModel $facturationModel, UrlGeneratorInterface $urlGenerator, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         if (isset($data['client'])) {
 
@@ -68,6 +86,7 @@ class FacturationModelController extends AbstractController
         $updatedFacturationModel
             ->setClient($client ?? $updatedFacturationModel->getClient())
             ->setStatus("on")
+            ->setUpdatedBy($this->user->getId())
         ;
 
         $entityManager->persist($updatedFacturationModel);

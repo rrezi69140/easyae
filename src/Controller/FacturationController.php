@@ -17,10 +17,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/facturation')]
 class FacturationController extends AbstractController
 {
+    private $user;
+
+    public function __construct(Security $security)
+    {
+        $this->user = $security->getUser();
+    }
+
     #[Route(name: 'api_facturation_index', methods: ["GET"])]
     #[IsGranted("ROLE_ADMIN", message: "non")]
     public function getAll(FacturationRepository $facturationRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
@@ -50,11 +58,17 @@ class FacturationController extends AbstractController
     #[Route(name: 'api_facturation_new', methods: ["POST"])]
     public function create(Request $request, ContratRepository $contratRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->toArray();
         $contrat = $contratRepository->find($data["contrat"]);
         $facturation = $serializer->deserialize($request->getContent(), Facturation::class, 'json', []);
         $facturation->setcontrat($contrat)
             ->setStatus("on")
+            ->setCreatedBy($this->user->getId())
+            ->setUpdatedBy($this->user->getId())
         ;
         $entityManager->persist($facturation);
         $entityManager->flush();
@@ -66,13 +80,17 @@ class FacturationController extends AbstractController
     #[Route(path: '/{id}', name: 'api_facturation_edit', methods: ["PATCH"])]
     public function update(TagAwareCacheInterface $cache,Facturation $facturation, Request $request, UrlGeneratorInterface $urlGenerator, ContratRepository $contratRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+        
         $data = $request->toArray();
         if (isset($data["contrat"])) {
             $contrat = $contratRepository->find($data["contrat"]);
         }
 
         $updateFacturation = $serializer->deserialize(data: $request->getContent(), type: Facturation::class, format:"json", context: [AbstractNormalizer::OBJECT_TO_POPULATE => $facturation]);
-        $updateFacturation->setcontrat($contrat ?? $updateFacturation->getcontrat())->setStatus("on");
+        $updateFacturation->setcontrat($contrat ?? $updateFacturation->getcontrat())->setStatus("on")->setUpdatedBy($this->user->getId());
 
         $entityManager->persist(object: $updateFacturation);
         $entityManager->flush();

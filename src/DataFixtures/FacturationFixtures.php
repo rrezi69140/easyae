@@ -23,7 +23,7 @@ class FacturationFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-
+        $adminUser = $this->getReference(UserFixtures::ADMIN_REF);
         $now = new \DateTime();
         $prefixContrat = ContratFixtures::PREFIX;
         $contratRefs = [];
@@ -42,6 +42,8 @@ class FacturationFixtures extends Fixture implements DependentFixtureInterface
                 ->setContrat($contrat)
                 ->setCreatedAt($dateCreated)
                 ->setUpdatedAt($dateUpdated)
+                ->setCreatedBy($adminUser->getId())
+                ->setUpdatedBy($adminUser->getId())
             ;
 
             $manager->persist($facturation);
@@ -54,6 +56,7 @@ class FacturationFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
+            UserFixtures::class,
             ContratFixtures::class
         ];
     }

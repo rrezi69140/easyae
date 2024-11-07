@@ -17,11 +17,19 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/quantity-type')]
 
 class QuantityTypeController extends AbstractController
 {
+    private $user;
+
+    public function __construct(Security $security)
+    {
+        $this->user = $security->getUser();
+    }
+
     #[Route(name: 'api_quantity_type_index', methods: ["GET"])]
     public function getAll(QuantityTypeRepository $quantityTypeRepository, SerializerInterface $serializer,TagAwareCacheInterface $cache): JsonResponse
     {
@@ -46,8 +54,15 @@ class QuantityTypeController extends AbstractController
     #[Route(name: 'api_quantity_type_new', methods: ["POST"])]
     public function create(ValidatorInterface $validator, TagAwareCacheInterface $cache, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $quantityType = $serializer->deserialize($request->getContent(), QuantityType::class, 'json', []);
-        $quantityType->setStatus("on");
+        $quantityType->setStatus("on")
+            ->setCreatedBy($this->user->getId())
+            ->setUpdatedBy($this->user->getId())
+        ;
         $errors = $validator->validate($quantityType);
         if (count($errors) > 0) {
             return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
@@ -62,8 +77,14 @@ class QuantityTypeController extends AbstractController
     #[Route(path: "/{id}", name: 'api_quantity_type_edit', methods: ["PATCH"])]
     public function update(TagAwareCacheInterface $cache, QuantityType $quantityType, UrlGeneratorInterface $urlGenerator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $updatedQuantityType = $serializer->deserialize($request->getContent(), QuantityType::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $quantityType]);
-        $updatedQuantityType->setStatus("on");
+        $updatedQuantityType->setStatus("on")
+            ->setUpdatedBy($this->user->getId())
+        ;
 
         $entityManager->persist($updatedQuantityType);
         $entityManager->flush();

@@ -14,10 +14,18 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/fonction')]
 class FonctionController extends AbstractController
 {
+    private $user;
+
+    public function __construct(Security $security)
+    {
+        $this->user = $security->getUser();
+    }
+
     #[Route(name: 'app_fonction', methods: ["GET"])]
     public function getAll(FonctionRepository $fonctionRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -41,8 +49,15 @@ class FonctionController extends AbstractController
     #[Route(name: 'api_fonction_new', methods: ["POST"])]
     public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $fonction = $serializer->deserialize($request->getContent(), Fonction::class, 'json', []);
-        $fonction->setStatus("on");
+        $fonction->setStatus("on")
+            ->setCreatedBy($this->user->getId())
+            ->setUpdatedBy($this->user->getId())
+        ;
 
         $entityManager->persist($fonction);
         $entityManager->flush();
@@ -56,8 +71,12 @@ class FonctionController extends AbstractController
     #[Route(path: "/{id}", name: 'api_fonction_edit', methods: ["PATCH"])]
     public function update(Fonction $fonction, UrlGeneratorInterface $urlGenerator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
+        if (!$this->user) {
+            return new JsonResponse(['message' => 'User not authenticated'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
         $updatedFonction = $serializer->deserialize($request->getContent(), Fonction::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $fonction]);
-        $updatedFonction->setStatus("on");
+        $updatedFonction->setStatus("on")->setUpdatedBy($this->user->getId());
 
         $entityManager->persist($updatedFonction);
         $entityManager->flush();
