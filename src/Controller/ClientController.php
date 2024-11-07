@@ -44,6 +44,17 @@ class ClientController extends AbstractController
         return new JsonResponse($clientJson, JsonResponse::HTTP_OK, [], true);
     }
 
+    #[Route(path: '/{id}/contrats', name: 'api_client_show_Contrats', methods: ["GET"])]
+    public function getContrats(Client $client = null, SerializerInterface $serializer): JsonResponse
+    {
+        if (!$client) {
+            return new JsonResponse(['error' => 'Client not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $clientJson = $serializer->serialize($client->getContrats(), 'json', ['groups' => ["client"]]);
+        return new JsonResponse($clientJson, JsonResponse::HTTP_OK, [], true);
+    }
+
     #[Route(name: 'api_client_new', methods: ["POST"])]
     public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -101,5 +112,5 @@ class ClientController extends AbstractController
         $entityManager->flush();
         $cache->invalidateTags(["client"]);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
-    }    
+    }
 }
