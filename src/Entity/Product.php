@@ -51,6 +51,7 @@ class Product
     private Collection $contrats;
 
     #[ORM\Column]
+    #[Groups(['product'])]
     private ?float $fees = null;
 
     public function __construct()
