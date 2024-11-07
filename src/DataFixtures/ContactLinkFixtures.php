@@ -28,7 +28,7 @@ class ContactLinkFixtures extends Fixture implements DependentFixtureInterface
         $prefixContact = ContactFixtures::PREFIX;
         $prefixContactLinkType = ContactLinkTypeFixtures::PREFIX;
         $contactRefs = [];
-        $contactLinkTypeRefs[] = [];
+        $contactLinkTypeRefs = [];
 
         for ($i = ContactFixtures::POOL_MIN; $i < ContactFixtures::POOL_MAX; $i++) {
             $contactRefs[] = $prefixContact . $i;

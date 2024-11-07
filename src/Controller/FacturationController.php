@@ -55,7 +55,7 @@ class FacturationController extends AbstractController
     public function update(Facturation $facturation, Request $request, UrlGeneratorInterface $urlGenerator, ContratRepository $contratRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
-        if (isset($data{"contrat"})) {
+        if (isset($data["contrat"])) {
             $contrat = $contratRepository->find($data["contrat"]);
         }
 
@@ -74,7 +74,7 @@ class FacturationController extends AbstractController
     {
         $data = $request->toArray();
 
-        if (isset($data{'force'}) && $data['force'] === true) {
+        if (isset($data['force']) && $data['force'] === true) {
             $entityManager->remove(object: $facturation);
             $entityManager->flush();
         }
