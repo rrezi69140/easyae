@@ -13,26 +13,36 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/api/contact-link')]
 
 class ContactLinkController extends AbstractController
 {
+    public function __construct(
+        private readonly TagAwareCacheInterface $cache
+    )
+    {}
+
     #[Route(name: 'api_contact_link_index', methods: ["GET"])]
     public function getAll(ContactLinkRepository $contactLinkRepository, SerializerInterface $serializer): JsonResponse
     {
-        $contactLinkList = $contactLinkRepository->findAll();
-
-        $contactLinkJson = $serializer->serialize($contactLinkList, 'json', ['groups' => "contactLink"]);
+        $idCache = 'getAllContactLinks';
+        $contactLinkJson = $this->cache->get($idCache, function (ItemInterface $item) use ($contactLinkRepository, $serializer) {
+            $item->tag('contactLink');
+            $item->tag('contactLinkType');
+            $contactLinkList = $contactLinkRepository->findAll();
+            return $serializer->serialize($contactLinkList, 'json', ['groups' => 'contactLink']);
+        });
 
         return new JsonResponse($contactLinkJson, JsonResponse::HTTP_OK, [], true);
     }
+
     #[Route(path: '/{id}', name: 'api_contact_link_show', methods: ["GET"])]
     public function get(ContactLink $contactLink, SerializerInterface $serializer): JsonResponse
     {
         // $contactLinkList = $contactLinkRepository->find($id);
-
-
 
         $contactLinkJson = $serializer->serialize($contactLink, 'json', ['groups' => "contactLink"]);
 
@@ -50,6 +60,7 @@ class ContactLinkController extends AbstractController
         ;
         $entityManager->persist($contactLink);
         $entityManager->flush();
+        $this->cache->invalidateTags(['contactLink']);
         $contactLinkJson = $serializer->serialize($contactLink, 'json', ['groups' => "contactLink"]);
         return new JsonResponse($contactLinkJson, JsonResponse::HTTP_OK, [], true);
     }
@@ -70,6 +81,7 @@ class ContactLinkController extends AbstractController
 
         $entityManager->persist($updatedContactLink);
         $entityManager->flush();
+        $this->cache->invalidateTags(['contactLink']);
 //        $contactLinkJson = $serializer->serialize($updatedContactLink, 'json', ['groups' => "contactLinkType"]);
         $location = $urlGenerator->generate("api_contact_link_show", ['id' => $updatedContactLink->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
@@ -87,6 +99,7 @@ class ContactLinkController extends AbstractController
         }
 
         $entityManager->flush();
+        $this->cache->invalidateTags(['contactLink']);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }

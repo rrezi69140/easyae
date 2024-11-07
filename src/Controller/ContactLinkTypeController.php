@@ -13,12 +13,18 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Contracts\Cache\ItemInterface;
+
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/api/contact-link-type')]
 
 class ContactLinkTypeController extends AbstractController
 {
+    public function __construct(
+        private readonly TagAwareCacheInterface $cache
+    )
+    {}
+
     #[Route(name: 'api_contact_link_type_index', methods: ["GET"])]
     public function getAll(ContactLinkTypeRepository $contactLinkTypeRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -28,9 +34,9 @@ class ContactLinkTypeController extends AbstractController
             $item->tag("client");
             $contactLinkTypeList = $contactLinkTypeRepository->findAll();
             $contactLinkTypeJson = $serializer->serialize($contactLinkTypeList, 'json', ['groups' => "contactLinkType"]);
-
             return $contactLinkTypeJson;
         });
+
 
         return new JsonResponse($contactLinkTypeJson, JsonResponse::HTTP_OK, [], true);
     }
@@ -51,6 +57,9 @@ class ContactLinkTypeController extends AbstractController
         $entityManager->persist($updatedContactLinkType);
         $entityManager->flush();
 
+//        $contactLinkTypeJson = $serializer->serialize($updatedContactLinkType, 'json', ['groups' => "contactLinkType"]);
+
+
         $cache->invalidateTags(["contactLinkType", "client"]);
 
         $location = $urlGenerator->generate("api_contact_link_type_show", ['id' => $updatedContactLinkType->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -69,6 +78,9 @@ class ContactLinkTypeController extends AbstractController
         }
 
         $entityManager->flush();
+
+        $this->cache->invalidateTags(['contactLinkType']);
+
 
         $cache->invalidateTags(["contactLinkType"]);
 
