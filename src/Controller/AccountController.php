@@ -38,12 +38,9 @@ class AccountController extends AbstractController
             return $accountJson;
 
         });
-
-
-
-
         return new JsonResponse($accountJson, JsonResponse::HTTP_OK, [], true);
     }
+    
     #[Route(path: '/{id}', name: 'api_account_show', methods: ["GET"])]
     public function get(Account $account, SerializerInterface $serializer): JsonResponse
     {
@@ -101,24 +98,20 @@ class AccountController extends AbstractController
         $location = $urlGenerator->generate("api_account_show", ['id' => $updatedAccount->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
+
     #[Route(path: "/{id}", name: 'api_account_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, Account $account, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
+            if (!$this->isGranted("ROLE_ADMIN")) {
+                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
+            }
             $entityManager->remove($account);
-
-
         } else {
-            $account
-                ->setStatus("off")
-            ;
-
+            $account->setStatus("off");
             $entityManager->persist($account);
         }
-
-
-
         $entityManager->flush();
         $cache->invalidateTags(["account"]);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);

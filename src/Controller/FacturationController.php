@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Contrat;
 use App\Entity\Facturation;
 use App\Repository\ContratRepository;
+use App\Repository\FacturationModelRepository;
 use App\Repository\FacturationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +23,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 class FacturationController extends AbstractController
 {
     #[Route(name: 'api_facturation_index', methods: ["GET"])]
-    #[IsGranted("ROLE_ADMIN", message: "non")]
+    #[IsGranted("ROLE_ADMIN", message: "not authorized")]
     public function getAll(FacturationRepository $facturationRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
 
@@ -30,6 +31,7 @@ class FacturationController extends AbstractController
         $facturationJson = $cache->get($idCache, function (ItemInterface $item) use ($facturationRepository, $serializer) {
             $item->tag("facturation");
             $item->tag("contrat");
+            $item->tag("model");
             $facturationList = $facturationRepository->findAll();
             $facturationJson = $serializer->serialize($facturationList, 'json', ['groups' => "facturation"]);
             
@@ -48,31 +50,36 @@ class FacturationController extends AbstractController
     }
 
     #[Route(name: 'api_facturation_new', methods: ["POST"])]
-    public function create(Request $request, ContratRepository $contratRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
+    public function create(Request $request, ContratRepository $contratRepository,FacturationModelRepository $modelRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
         $data = $request->toArray();
         $contrat = $contratRepository->find($data["contrat"]);
+        $model = $modelRepository->find($data["model"]);
         $facturation = $serializer->deserialize($request->getContent(), Facturation::class, 'json', []);
         $facturation->setcontrat($contrat)
+            ->setModel($model)
             ->setStatus("on")
         ;
         $entityManager->persist($facturation);
         $entityManager->flush();
         $cache->invalidateTags(["facturation"]);
-        $contratJson = $serializer->serialize($facturation, 'json', ['groups' => "facturation"]);
-        return new JsonResponse($contratJson, JsonResponse::HTTP_OK, [], true);
+        $facturationJson = $serializer->serialize($facturation, 'json', ['groups' => "facturation"]);
+        return new JsonResponse($facturationJson, JsonResponse::HTTP_OK, [], true);
     }
 
     #[Route(path: '/{id}', name: 'api_facturation_edit', methods: ["PATCH"])]
-    public function update(TagAwareCacheInterface $cache,Facturation $facturation, Request $request, UrlGeneratorInterface $urlGenerator, ContratRepository $contratRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function update(TagAwareCacheInterface $cache,Facturation $facturation, Request $request, UrlGeneratorInterface $urlGenerator, ContratRepository $contratRepository,FacturationModelRepository $modelRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = $request->toArray();
         if (isset($data["contrat"])) {
             $contrat = $contratRepository->find($data["contrat"]);
         }
+        if (isset($data["model"])) {
+            $model = $modelRepository->find($data["model"]);
+        }
 
         $updateFacturation = $serializer->deserialize(data: $request->getContent(), type: Facturation::class, format:"json", context: [AbstractNormalizer::OBJECT_TO_POPULATE => $facturation]);
-        $updateFacturation->setcontrat($contrat ?? $updateFacturation->getcontrat())->setStatus("on");
+        $updateFacturation->setcontrat($contrat ?? $updateFacturation->getcontrat())->setModel($model ?? $updateFacturation->getModel())->setStatus("on");
 
         $entityManager->persist(object: $updateFacturation);
         $entityManager->flush();
@@ -85,16 +92,16 @@ class FacturationController extends AbstractController
     #[Route(path: '/{id}', name: 'api_facturation_delete', methods: ["DELETE"])]
     public function delete(TagAwareCacheInterface $cache, Facturation $facturation, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-
         $data = $request->toArray();
-
         if (isset($data['force']) && $data['force'] === true) {
+            if (!$this->isGranted("ROLE_ADMIN")) {
+                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
+            }
             $entityManager->remove(object: $facturation);
-            $entityManager->flush();
+        } else {
+            $facturation->setStatus("off");
+            $entityManager->persist(object: $facturation);
         }
-        $facturation->setStatus("off");
-
-        $entityManager->persist(object: $facturation);
         $entityManager->flush();
         $cache->invalidateTags(["facturation"]);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, []);
