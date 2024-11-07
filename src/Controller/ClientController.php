@@ -145,6 +145,7 @@ class ClientController extends AbstractController
         $updatedClient
             ->setStatus("on")
             ->setFacturationModel($model)
+            ->setUpdatedBy($this->user->getId())
         ;
 
         $entityManager->persist($updatedClient);

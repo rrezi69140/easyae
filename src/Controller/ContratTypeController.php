@@ -17,6 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use App\Service\DeleteService;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/contrat-type')]
 #[IsGranted("ROLE_ADMIN", message: "Vous n'avez pas la permission")]

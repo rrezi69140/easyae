@@ -15,6 +15,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use App\Service\DeleteService;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/info-type')]
 class InfoTypeController extends AbstractController

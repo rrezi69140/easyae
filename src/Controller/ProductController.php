@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use App\Service\DeleteService;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/product')]
 
@@ -74,7 +75,7 @@ class ProductController extends AbstractController
         $product
             ->setType($type)->setStatus("on")
             ->setQuantityType($quantityType)->setStatus("on")
-            ->setCreatedBy($this->user->getId())
+            ->setCreatedBy($this->user->getId())    
             ->setUpdatedBy($this->user->getId())
         ;
 

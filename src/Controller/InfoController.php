@@ -18,6 +18,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use App\Service\DeleteService;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/api/info')]
 

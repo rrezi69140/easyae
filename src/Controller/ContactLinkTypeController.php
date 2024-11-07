@@ -67,9 +67,6 @@ class ContactLinkTypeController extends AbstractController
         $entityManager->persist($updatedContactLinkType);
         $entityManager->flush();
 
-        //        $contactLinkTypeJson = $serializer->serialize($updatedContactLinkType, 'json', ['groups' => "contactLinkType"]);
-
-
         $cache->invalidateTags(["contactLinkType", "client"]);
 
         $location = $urlGenerator->generate("api_contact_link_type_show", ['id' => $updatedContactLinkType->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
