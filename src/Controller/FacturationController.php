@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use App\Service\DeleteService;
 
 #[Route('/api/facturation')]
 class FacturationController extends AbstractController
@@ -73,5 +76,11 @@ class FacturationController extends AbstractController
         $factureJson = $serializer->serialize($factureData, 'json', ['groups' => 'facturation']);
 
         return new JsonResponse($factureJson, JsonResponse::HTTP_OK, [], true);
+    }
+      #[Route(path: '/{id}', name: 'api_facturation_delete', methods: ["DELETE"])]
+    public function delete(Facturation $facturation, Request $request, DeleteService $deleteService): JsonResponse
+    {
+        $data = $request->toArray();
+        return $deleteService->deleteEntity($facturation, $data, 'facturation');
     }
 }

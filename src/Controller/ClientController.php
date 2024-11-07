@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Client;
 use App\Repository\ClientRepository;
 use App\Repository\FacturationModelRepository;
+use App\Repository\AccountRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,6 +16,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use App\Service\DeleteService;
 
 #[Route('/api/client')]
 class ClientController extends AbstractController
@@ -32,6 +34,14 @@ class ClientController extends AbstractController
         });
 
         return new JsonResponse($clientJson, JsonResponse::HTTP_OK, [], true);
+    }
+
+    #[Route(path: '/{id}/carnet-account', name: 'api_client_carnet_account', methods: ["GET"])]
+    public function getCarnetAccount(Client $client = null, SerializerInterface $serializer, AccountRepository $accountRepository) {
+        $accountsList = $accountRepository->findBy(['client' => $client->getId()]);
+        $accountsJson = $serializer->serialize($accountsList, 'json', ['groups' => ["account"]]);
+        
+        return new JsonResponse($accountsJson, JsonResponse::HTTP_OK, [], true);
     }
 
     #[Route(path: '/{id}', name: 'api_client_show', methods: ["GET"])]
@@ -86,23 +96,7 @@ class ClientController extends AbstractController
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
     }
 
-    #[Route(path: "/{id}", name: 'api_client_delete', methods: ["DELETE"])]
-    public function delete(Client $client, Request $request, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
-    {   
-        $data = $request->toArray();
-        if (isset($data['force']) && $data['force'] === true) {
-            if (!$this->isGranted("ROLE_ADMIN")) {
-                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
-            }
-            $entityManager->remove($client);
-        } else {
-            $client->setStatus("off");
-            $entityManager->persist($client);
-        }
-        $entityManager->flush();
-        $cache->invalidateTags(["client"]);
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
-    }    
+
 
     #[Route(path: "/update_facturation_model/{id}", name: 'update_client_facturationModel', methods: ["POST"])]
     public function updateFacturationModel(Client $client,FacturationModelRepository $modelRepository, UrlGeneratorInterface $urlGenerator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
@@ -126,5 +120,13 @@ class ClientController extends AbstractController
 
         $location = $urlGenerator->generate("api_client_show", ['id' => $updatedClient->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT, ["Location" => $location]);
+    }
+    #[Route(path: "/{id}", name: 'api_client_delete', methods: ["DELETE"])]
+
+    public function delete(Client $client, Request $request, DeleteService $deleteService): JsonResponse
+    {
+        $data = $request->toArray();
+        return $deleteService->deleteEntity($client, $data, 'client');
+
     }
 }
