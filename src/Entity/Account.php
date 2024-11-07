@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\StatisticsPropertiesTrait;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Account
@@ -20,6 +20,9 @@ class Account
     #[Groups(['account'])]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: "Votre Compte doit avoir un Nom")]
+    #[Assert\Length(min: 4, max: 255, minMessage: "Votre Compte doit avoir un Nom comportantau moins {{limit}} caractères")]
+    #[Assert\NotNull(message: "Votre Compte doit avoir un Nom non null")]
     #[ORM\Column(length: 255)]
     #[Groups(['account'])]
     private ?string $name = null;
