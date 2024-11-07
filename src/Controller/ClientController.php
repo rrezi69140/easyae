@@ -89,18 +89,17 @@ class ClientController extends AbstractController
     public function delete(Client $client, Request $request, EntityManagerInterface $entityManager, TagAwareCacheInterface $cache): JsonResponse
     {
         $data = $request->toArray();
-
         if (isset($data['force']) && $data['force'] === true) {
+            if (!$this->isGranted("ROLE_ADMIN")) {
+                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
+            }
             $entityManager->remove($client);
         } else {
             $client->setStatus("off");
             $entityManager->persist($client);
         }
-
         $entityManager->flush();
-
         $cache->invalidateTags(["client"]);
-
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
-    }
+    }    
 }

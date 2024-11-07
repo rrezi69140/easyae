@@ -83,19 +83,14 @@ class FacturationModelController extends AbstractController
     {
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
+            if (!$this->isGranted("ROLE_ADMIN")) {
+                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
+            }
             $entityManager->remove($facturationModel);
-
-
         } else {
-            $facturationModel
-                ->setStatus("off")
-            ;
-
+            $facturationModel->setStatus("off");
             $entityManager->persist($facturationModel);
         }
-
-
-
         $entityManager->flush();
         $cache->invalidateTags(["facturationModel"]);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);

@@ -80,13 +80,12 @@ class QuantityTypeController extends AbstractController
     {
         $data = $request->toArray();
         if (isset($data['force']) && $data['force'] === true) {
+            if (!$this->isGranted("ROLE_ADMIN")) {
+                return new JsonResponse(["error" => "Hanhanhaaaaan vous n'avez pas dit le mot magiiiiqueeuuuuuh"], JsonResponse::HTTP_FORBIDDEN);
+            }
             $entityManager->remove($quantityType);
-
-
         } else {
-            $quantityType
-                ->setStatus("off")
-            ;
+            $quantityType->setStatus("off");
             $entityManager->persist($quantityType);
         }
         $cache->invalidateTags(["quantityType"]);
