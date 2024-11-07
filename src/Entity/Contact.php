@@ -87,7 +87,7 @@ class Contact
         return $this;
 
     }
-    
+
     public function removeLink(ContactLink $link): static
     {
         if ($this->link->removeElement($link)) {

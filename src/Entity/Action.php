@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ActionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,6 +28,17 @@ class Action
 
     #[ORM\Column(length: 24)]
     private ?string $status = null;
+
+    /**
+     * @var Collection<int, History>
+     */
+    #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'actions')]
+    private Collection $history;
+
+    public function __construct()
+    {
+        $this->history = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -76,6 +89,30 @@ class Action
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, History>
+     */
+    public function getHistory(): Collection
+    {
+        return $this->history;
+    }
+
+    public function addHistory(History $history): static
+    {
+        if (!$this->history->contains($history)) {
+            $this->history->add($history);
+        }
+
+        return $this;
+    }
+
+    public function removeHistory(History $history): static
+    {
+        $this->history->removeElement($history);
 
         return $this;
     }
